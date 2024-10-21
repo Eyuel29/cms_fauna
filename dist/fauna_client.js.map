@@ -1,1 +1,0 @@
-{"version":3,"file":"fauna_client.js","sourceRoot":"","sources":["../src/fauna_client.ts"],"names":[],"mappings":";;;;;;AAAA,sDAA8B;AAEjB,QAAA,CAAC,GAAG,iBAAO,CAAC,KAAK,CAAC;AAElB,QAAA,WAAW,GAAG,IAAI,iBAAO,CAAC,MAAM,CAAC;IAC5C,MAAM,EAAE,OAAO,CAAC,GAAG,CAAC,gBAAgB,IAAI,EAAE;IAC1C,QAAQ,EAAE,sBAAsB;CACjC,CAAC,CAAC"}
