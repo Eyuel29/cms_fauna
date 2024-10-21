@@ -8,15 +8,19 @@
   "license": "MIT",
   "dependencies": {
     "bcrypt": "^5.1.1",
-    "body-parser": "^1.20.3",
     "cookie-parser": "^1.4.7",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "faunadb": "^4.8.1"
   },
+  "scripts": {
+    "start": "nodemon ./dist/app.js"
+  },
   "devDependencies": {
     "@types/express": "^5.0.0",
+    "@types/morgan": "^1.9.9",
     "@types/node": "^22.7.7",
+    "morgan": "^1.10.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.6.3"
   }

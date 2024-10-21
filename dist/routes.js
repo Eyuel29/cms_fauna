@@ -14,29 +14,54 @@ const fauna_client_1 = require("./fauna_client");
 const router = (0, express_1.Router)();
 router.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        res.send("Hii");
+        res.status(200).json({
+            success: true,
+            message: "HI :)"
+        });
     }
     catch (error) {
-        res.status(500).send(error);
+        res.status(500).json({
+            success: false,
+            error: error
+        });
     }
 }));
-router.get('/posts', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get('/blog', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const result = yield fauna_client_1.faunaClient.query(fauna_client_1.q.Map(fauna_client_1.q.Paginate(fauna_client_1.q.Documents(fauna_client_1.q.Collection('posts'))), fauna_client_1.q.Lambda('X', fauna_client_1.q.Get(fauna_client_1.q.Var('X')))));
-        res.json(result);
+        const result = yield fauna_client_1.faunaClient.query(fauna_client_1.q.Collection("blog"));
+        res.send(result);
     }
     catch (error) {
-        res.status(500).send(error);
+        res.status(500).json({
+            success: false,
+            error: error
+        });
+        console.log(error);
     }
 }));
-const createCollection = () => __awaiter(void 0, void 0, void 0, function* () {
+router.post('/blog', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const result = yield fauna_client_1.faunaClient.query(fauna_client_1.q.CreateCollection({ name: 'posts' }));
-        console.log('Collection created:', result);
+        const { title, content } = req.body;
+        if (!title || !content) {
+            res.status(401).json({
+                success: false,
+                message: "Please provide the required title and content!"
+            });
+            return;
+        }
+        res.status(200).json({
+            success: true,
+            message: "Blog post created successfully",
+            data: { title, content }
+        });
+        return;
     }
     catch (error) {
-        console.log('Error creating collection:', error);
+        res.status(500).json({
+            success: false,
+            error: error
+        });
     }
-});
+}));
 exports.default = router;
 //# sourceMappingURL=routes.js.map

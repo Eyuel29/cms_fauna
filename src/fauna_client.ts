@@ -1,11 +1,8 @@
 import faunadb from 'faunadb';
-import dotenv from 'dotenv';
 
-dotenv.config();
+export const q = faunadb.query;
 
-const q = faunadb.query;
-const faunaClient = new faunadb.Client({
-  secret: process.env.FAUNA_SECRET || 'YOUR_FAUNA_SECRET'
+export const faunaClient = new faunadb.Client({
+  secret: process.env.FAUNA_SERVER_KEY || "",
+  endpoint: "https://db.fauna.com",
 });
-
-export { faunaClient, q };

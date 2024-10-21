@@ -5,37 +5,60 @@ const router = Router();
 
 router.get('/', async (req: Request, res: Response) => {
     try {
-      res.send("Hii");
+      res.status(200).json({
+        success : true,
+        message : "HI :)"
+      }); 
     } catch (error) {
-      res.status(500).send(error);
+      res.status(500).json({
+        success: false,
+        error: error
+      });
     }
 });
 
-router.get('/posts', async (req: Request, res: Response) => {
+router.get('/blog', async (req: Request, res: Response) => {
   try {
-    const result = await faunaClient.query(
-      q.Map(
-        q.Paginate(q.Documents(q.Collection('posts'))),
-        q.Lambda('X', q.Get(q.Var('X')))
-      )
-    );
-    res.json(result);
+    const result = await faunaClient.query(q.Collection("blog"));
+    res.send(result);
   } catch (error) {
-    res.status(500).send(error);
+    res.status(500).json({
+      success: false,
+      error: error
+    });
+    console.log(error);
+    
   }
 });
 
-
-const createCollection = async () => {
-  try {
-    const result = await faunaClient.query(
-      q.CreateCollection({ name: 'posts' })
-    );
-    console.log('Collection created:', result);
-  } catch (error) {
-    console.log('Error creating collection:', error);
-  }
+interface BlogPostBody {
+  title: string;
+  content: string;
 }
 
+router.post('/blog', async (req: Request, res: Response) => {
+  try {
+    const { title, content } = req.body;
+    if (!title || !content) {
+      res.status(401).json({
+        success: false,
+        message: "Please provide the required title and content!"
+      });
+      return;
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Blog post created successfully",
+      data: { title, content }
+    });
+    return;
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error
+    });
+  }
+});
 
 export default router;
