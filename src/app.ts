@@ -1,15 +1,24 @@
-import express, { Request, Response } from "express";
-import dotenv from 'dotenv';
+import express,{ Request, Response } from "express";
 import routes from './routes';
 import morgan from 'morgan';
+import dotenv from 'dotenv';
+import errorHandler from "./middlewares/ErrorHandler";
 
-dotenv.config();
 const app = express();
 const port = process.env.PORT || 3000;
 
+dotenv.config();
+
 app.use(morgan("tiny"));
 app.use(express.json());
-app.use('/', routes);
+
+app.use('/', 
+    express.Router()
+    .use('/api', routes)
+);
+
+app.use(errorHandler);
+
 app.listen(port, () => console.log(`Server running at http://localhost:${port}`));
 
 export default app;

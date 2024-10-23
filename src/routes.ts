@@ -1,64 +1,61 @@
 import { Router, Request, Response } from 'express';
-import { faunaClient, q } from './fauna_client';
-
+import { faunaClient } from './fauna_client';
+import { fql } from 'fauna';
 const router = Router();
-
-router.get('/', async (req: Request, res: Response) => {
-    try {
-      res.status(200).json({
-        success : true,
-        message : "HI :)"
-      }); 
-    } catch (error) {
-      res.status(500).json({
-        success: false,
-        error: error
-      });
-    }
-});
-
-router.get('/blog', async (req: Request, res: Response) => {
+  
+router.get('/blogs', async (req: Request, res: Response) => {
   try {
-    const result = await faunaClient.query(q.Collection("blog"));
-    res.send(result);
+    const result = await faunaClient.query(fql `Blog.all()`);
+    res.status(200).json(result);
   } catch (error) {
     res.status(500).json({
       success: false,
       error: error
-    });
-    console.log(error);
-    
+    });     
   }
 });
 
-interface BlogPostBody {
-  title: string;
-  content: string;
-}
 
-router.post('/blog', async (req: Request, res: Response) => {
+router.get('/projects', async (req: Request, res: Response) => {
   try {
-    const { title, content } = req.body;
-    if (!title || !content) {
-      res.status(401).json({
-        success: false,
-        message: "Please provide the required title and content!"
-      });
-      return;
-    }
-
-    res.status(200).json({
-      success: true,
-      message: "Blog post created successfully",
-      data: { title, content }
-    });
-    return;
+    const result = await faunaClient.query(fql `Project.all()`);
+    res.status(200).json(result);
   } catch (error) {
     res.status(500).json({
       success: false,
       error: error
-    });
+    });     
   }
+});
+
+
+router.get('/certificates', async (req: Request, res: Response) => {
+  try {
+    const result = await faunaClient.query(fql `Certificate.all()`);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error
+    });     
+  }
+});
+
+
+router.get('/experiences', async (req: Request, res: Response) => {
+  try {
+    const result = await faunaClient.query(fql `Experience.all()`);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error
+    });     
+  }
+});
+
+router.all('/', async (req: Request, res: Response) => {
+  res.status(200).json("OK");
 });
 
 export default router;
