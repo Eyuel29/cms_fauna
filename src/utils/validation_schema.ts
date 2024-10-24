@@ -32,16 +32,6 @@ export const projectSchema = Joi.object({
 });
 
 export const reviewSchema = Joi.object({
-    "name" : Joi.string().trim().min(5).required(),
-    "description" : Joi.string().trim().min(50).required(),
-    "startDate" : Joi.date().required(),
-    "endDate" : Joi.date(),
-    "technologies" : Joi.string().trim().min(10).required(),
-    "url" : Joi.string().trim().min(10).required(),
-});
-
-
-export const reviewSchema = Joi.object({
     "reviewerName" : Joi.string().trim().min(5).required(),
     "reviewerEmail" : Joi.string().trim().email().min(5).required(),
     "rating" : Joi.number().min(1).max(5).required(),

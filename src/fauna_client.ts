@@ -2,6 +2,18 @@ import {Client} from 'fauna';
 import dotenv from 'dotenv';
 dotenv.config();
 
-const faunaClient = new Client({secret: process.env.FAUNA_SERVER_KEY || ""});
+class FaunaClient {
+  private static instance: Client;
+  private constructor() {}
 
-export { faunaClient };
+  public static getClient(): Client {
+    if (!FaunaClient.instance) {
+        FaunaClient.instance = new Client(
+        {secret: process.env.FAUNA_SERVER_KEY || ""}
+      );
+    }
+    return FaunaClient.instance;
+  }
+}
+
+export default FaunaClient;

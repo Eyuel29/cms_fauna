@@ -1,51 +1,20 @@
 import { Router, Request, Response } from 'express';
-import { faunaClient } from './fauna_client';
-import { fql } from 'fauna';
+import blogController from './controllers/blog_controller';
 const router = Router();
   
-router.get('/blogs', async (req: Request, res: Response) => {
-  try {
-    const result = await faunaClient.query(fql `Blog.all()`);
-    res.status(200).json(result);
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error
-    });     
-  }
-});
-
-
-router.get('/projects', async (req: Request, res: Response) => {
-  try {
-    const result = await faunaClient.query(fql `Project.all()`);
-    res.status(200).json(result);
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error
-    });     
-  }
-});
-
-
-router.get('/certificates', async (req: Request, res: Response) => {
-  try {
-    const result = await faunaClient.query(fql `Certificate.all()`);
-    res.status(200).json(result);
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error
-    });     
-  }
-});
-
-
-router.get('/experiences', async (req: Request, res: Response) => );
+router.post('/blog/create', blogController.createBlog);
+router.get('/blogs', blogController.getAllBlogs);
+router.get('/blog/:id', blogController.getSingleBlog);
+router.put('/blog/:id', blogController.updateBlog);
+router.delete('/blog/:id', blogController.deleteBlog);
+router.post('/blog/upvote/:id', blogController.upVoteBlog);
+router.post('/blog/downvote/:id', blogController.downVoteBlog);
+router.delete('/blog/:id', blogController.deleteReaction);
+router.post('/blog/comment/:id', blogController.commentOnBlog);
+router.delete('/blog/comments/:id/:commentId', blogController.deleteComment);   
 
 router.all('/', async (req: Request, res: Response) => {
-  res.status(200).json("OK");
+  res.status(201).json({status: "OK"});
 });
 
 export default router;
