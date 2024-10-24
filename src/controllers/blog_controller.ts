@@ -1,7 +1,7 @@
 import { Response, Request } from "express";
 import { faunaClient } from "../fauna_client";
 import { fql } from "fauna";
-import Blog from "../models/Blog";
+import { blogSchema } from "../validation_schemas/validation_schema";
 
 type BlogController = {
     createBlog: (req: Request, res: Response) => Promise<void>;
@@ -13,25 +13,26 @@ type BlogController = {
     getSingleBlog: (req: Request, res: Response) => Promise<void>;
     getAllBlogs: (req: Request, res: Response) => Promise<void>;
 };
-
+    
 
 const blogController: BlogController = {
     createBlog: async (req: Request, res: Response) => {
+        const { error } = blogSchema.validate(req.body);
+        if (error) {
+            res.status(400).json({
+                success: false,
+                message: error.details[0].message,
+            });
+            return;
+        }
+
         try {
-            if (!Blog.validate(req.body)) {
-                res.status(401).json({
-                    success : false,
-                    message: "Invalid Input!"
-                });
-                return;
-            }
-
+            const { title, content, author } = req.body;
             const response = await faunaClient.query(
-                fql `Blog.create(${
-                    {
-                        
-
-                    }
+                fql `Blog.create({
+                    title: ${title},
+                    content: ${content},
+                    author: ${author}
                 })`
             );
 
@@ -40,32 +41,121 @@ const blogController: BlogController = {
         } catch (error) {
             res.status(500).json({
                 success: false,
+                message: "Internal server error!",
                 error: error
             });     
         }
     },
     updateBlog: async (req: Request, res: Response) => {
-        // Implementation goes here
+        if (!req?.params?.id) {
+            res.status(400).json({
+                success: false,
+                message: "Bad request"
+            });     
+        }  
+
+        try {
+            const {id} = req.params;
+            const result = await faunaClient.query(
+                fql `Blog.byId(${id}).delete()`
+            );
+
+            res.status(201).json({
+                success:true, 
+                data: result.data.data
+            });
+            return;
+        } catch (error) {
+            res.status(500).json({
+                success: false,
+                error: error
+            });     
+        }  
     },
     deleteBlog: async (req: Request, res: Response) => {
-        // Implementation goes here
+        if (!req?.params?.id) {
+            res.status(400).json({
+                success: false,
+                message: "Bad request"
+            });     
+        }  
+
+        const { error } = blogSchema.validate(req.body);
+        if (error) {
+            res.status(400).json({
+                success: false,
+                message: error.details[0].message,
+            });
+            return;
+        }
+
+        try {
+            const {id} = req.params;
+            const { title, content, author } = req.body;
+
+            const result = await faunaClient.query(
+                fql `Blog.byId(${id}).update(${{   
+                    title, 
+                    content, 
+                    author  
+                }})`
+            );
+
+            res.status(201).json({
+                success:true, 
+                data: result.data.data
+            });
+            return;
+        } catch (error) {
+            res.status(500).json({
+                success: false,
+                error: error
+            });     
+        }
     },
     upVoteBlog: async (req: Request, res: Response) => {
-        // Implementation goes here
+        
     },
     downVoteBlog: async (req: Request, res: Response) => {
-        // Implementation goes here
+        
     },
     commentOnBlog: async (req: Request, res: Response) => {
-        // Implementation goes here
+        
     },
     getSingleBlog: async (req: Request, res: Response) => {
-        // Implementation goes here
+    
+      if (!req?.params?.id) {
+        res.status(400).json({
+            success: false,
+            message: "Bad request"
+        });     
+      }  
+
+      try {
+        const {id} = req.params;
+        const result = await faunaClient.query(
+            fql `Blog.byId(${id})`
+        );
+
+        res.status(201).json({
+            success:true, 
+            data: result.data.data
+        });
+        return;
+      } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: error
+        });     
+      }
     },
     getAllBlogs: async (req: Request, res: Response) => {
         try {
             const result = await faunaClient.query(fql `Blog.all()`);
-            res.status(200).json(result);
+            res.status(201).json({
+            success:true, 
+            data: result.data.data
+        });
         } catch (error) {
             res.status(500).json({
                 success: false,

@@ -2,7 +2,7 @@ import express,{ Request, Response } from "express";
 import routes from './routes';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
-import errorHandler from "./middlewares/ErrorHandler";
+import errorHandler from "./middlewares/errorHandler";
 
 const app = express();
 const port = process.env.PORT || 3000;

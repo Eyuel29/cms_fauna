@@ -42,17 +42,7 @@ router.get('/certificates', async (req: Request, res: Response) => {
 });
 
 
-router.get('/experiences', async (req: Request, res: Response) => {
-  try {
-    const result = await faunaClient.query(fql `Experience.all()`);
-    res.status(200).json(result);
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error
-    });     
-  }
-});
+router.get('/experiences', async (req: Request, res: Response) => );
 
 router.all('/', async (req: Request, res: Response) => {
   res.status(200).json("OK");
