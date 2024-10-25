@@ -20,9 +20,9 @@ const ReviewController: ReviewController = {
             });
             return;
         }
-        
+
+        const { reviewerEmail,rating,content,reviewerName } = req.body;
         try {
-            const { reviewerEmail,rating,content,reviewerName } = req.body;
             const response = await FaunaClient
             .getClient().query(
                 fql `Review.create({
@@ -64,7 +64,8 @@ const ReviewController: ReviewController = {
       }
     },
     updateReview: async (req: Request, res: Response) => {
-        if (!req?.params?.id) {
+        const {id} = req.params;
+        if (!id) {
             res.status(400).json({
                 success: false,
                 message: "Bad request"
@@ -81,9 +82,8 @@ const ReviewController: ReviewController = {
             return;
         }
 
+        const { reviewerEmail,rating,content,reviewerName } = req.body;
         try {
-            const {id} = req.params;
-            const { reviewerEmail,rating,content,reviewerName } = req.body;
             const response = await FaunaClient
             .getClient().query(
                 fql `Review.byId(${id}).update({
@@ -107,7 +107,8 @@ const ReviewController: ReviewController = {
         }
     },
     deleteReview: async (req: Request, res: Response) => {
-        if (!req?.params?.id) {
+        const {id} = req.params;
+        if (!id) {
             res.status(400).json({
                 success: false,
                 message: "Bad request"
@@ -116,7 +117,6 @@ const ReviewController: ReviewController = {
         }  
 
         try {
-            const {id} = req.params;
             const result = await FaunaClient.getClient()
             .query(fql `Review.byId(${id}).delete()`);
 
