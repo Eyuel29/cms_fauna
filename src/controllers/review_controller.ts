@@ -20,7 +20,7 @@ const ReviewController: ReviewController = {
             });
             return;
         }
-
+        
         try {
             const { reviewerEmail,rating,content,reviewerName } = req.body;
             const response = await FaunaClient
