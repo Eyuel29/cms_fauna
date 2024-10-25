@@ -1,5 +1,5 @@
 import { Response, Request } from "express";
-import { fql } from "fauna";
+import { DateStub, fql } from "fauna";
 import { reviewSchema } from "../utils/validation_schema";
 import FaunaClient from "../fauna_client";
 
@@ -30,6 +30,8 @@ const ReviewController: ReviewController = {
                     rating: ${rating},
                     content: ${content},
                     reviewerName: ${reviewerName},
+                    createdAt: ${DateStub.fromDate(new Date(Date.now()))},
+                    updatedAt: ${DateStub.fromDate(new Date(Date.now()))}
                 })`
             );
 
@@ -91,6 +93,7 @@ const ReviewController: ReviewController = {
                     rating: ${rating},
                     content: ${content},
                     reviewerName: ${reviewerName},
+                    updatedAt: ${DateStub.fromDate(new Date(Date.now()))}
                 })`
             );
 

@@ -1,5 +1,5 @@
 import { Response, Request } from "express";
-import { fql } from "fauna";
+import { DateStub, fql } from "fauna";
 import { projectSchema } from "../utils/validation_schema";
 import FaunaClient from "../fauna_client";
 
@@ -31,7 +31,9 @@ const projectController: ProjectController = {
                     startDate : ${startDate},
                     endDate : ${endDate},
                     technologies : ${technologies},
-                    url : ${url}
+                    url : ${url},
+                    createdAt: ${DateStub.fromDate(new Date(Date.now()))},
+                    updatedAt: ${DateStub.fromDate(new Date(Date.now()))}
                 })`
             );
 
@@ -94,7 +96,8 @@ const projectController: ProjectController = {
                     startDate : ${startDate},
                     endDate : ${endDate},
                     technologies : ${technologies},
-                    url : ${url}
+                    url : ${url},
+                    updatedAt: ${DateStub.fromDate(new Date(Date.now()))}
                 })`
             );
 

@@ -1,8 +1,8 @@
 import { Response, Request } from "express";
 import FaunaClient from "../fauna_client";
-import { DocumentT, fql } from "fauna";
+import { DateStub, DocumentT, fql } from "fauna";
 import { blogSchema } from "../utils/validation_schema";
-import { Blog } from "../types/types";
+import { Blog } from "../model/model";
 
 type BlogController = {
     createBlog: (req: Request, res: Response) => Promise<void>;
@@ -41,7 +41,9 @@ const blogController: BlogController = {
                 fql `let blog = Blog.create({
                     title: ${title},
                     content: ${content},
-                    author: ${author}
+                    author: ${author},
+                    createdAt: ${DateStub.fromDate(new Date(Date.now()))},
+                    updatedAt: ${DateStub.fromDate(new Date(Date.now()))}
                 })
                 ${blogProjection}    
                 `
@@ -159,6 +161,7 @@ const blogController: BlogController = {
                     title: ${title},
                     content: ${content},
                     author: ${author},
+                    updatedAt: ${DateStub.fromDate(new Date(Date.now()))}
                 })
                 ${blogProjection}`
             );

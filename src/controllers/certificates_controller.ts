@@ -1,13 +1,29 @@
 import { Response, Request } from "express";
-import { fql } from "fauna";
+import { DateStub, DocumentT, fql } from "fauna";
 import FaunaClient from "../fauna_client";
 import { certificateSchema } from "../utils/validation_schema";
+import { Certificate } from "../model/model";
 
 type CertificateController = {
     createCertificate: (req: Request, res: Response) => Promise<void>;
     deleteCertificate: (req: Request, res: Response) => Promise<void>;
     getAllCertificates: (req: Request, res: Response) => Promise<void>;
 };
+
+
+const certificateProjection = fql `
+    certificate {
+        id,
+        title,
+        issuer,
+        dateIssued,
+        description,
+        url,
+        createdAt,
+        updatedAt
+    }
+`;
+
 
 const certificateController: CertificateController = {
     createCertificate: async (req: Request, res: Response) => {
@@ -20,23 +36,26 @@ const certificateController: CertificateController = {
             return;
         }
 
-        try {
-            const { title,issuer,dateIssued,description,url } = req.body;
+        const { title,issuer,dateIssued,description,url } = req.body;
 
-            const response = await FaunaClient
-            .getClient().query(
-                fql `Certificate.create({
+        try {
+            const {data: certificate} = await FaunaClient
+            .getClient().query<DocumentT<Certificate>>(
+                fql `let certificate = Certificate.create({
                     title: ${title},
                     issuer: ${issuer},
                     dateIssued: ${dateIssued},
                     description: ${description},
-                    url: ${url}
-                })`
+                    url: ${url},
+                    createdAt: ${DateStub.fromDate(new Date(Date.now()))},
+                    updatedAt: ${DateStub.fromDate(new Date(Date.now()))}
+                })
+                ${certificateProjection}`
             );
 
             res.status(201).json({
                 success:true, 
-                data: response
+                data: certificate
             });
             return;
         } catch (error) {
@@ -49,11 +68,18 @@ const certificateController: CertificateController = {
     },
     getAllCertificates: async (req: Request, res: Response) => {
       try {
-        const result = await FaunaClient.getClient()
-        .query(fql `Certificate.all()`);
+        const {data: certificates} = await FaunaClient.getClient()
+        .query<DocumentT<Certificate>>(fql `
+            let certificates = Certificate.all()
+            certificates.map( certificate =>{
+                    ${certificateProjection}
+                }
+            )
+            `
+        );
         res.status(201).json({
             success:true, 
-            data: result
+            data: certificates ?? []
         });
         return;
       } catch (error) {
@@ -65,7 +91,8 @@ const certificateController: CertificateController = {
       }
     },
     deleteCertificate: async (req: Request, res: Response) => {
-        if (!req?.params?.id) {
+        const {id} = req.params;
+        if (!id) {
             res.status(400).json({
                 success: false,
                 message: "Bad request"
@@ -74,13 +101,15 @@ const certificateController: CertificateController = {
         }  
 
         try {
-            const {id} = req.params;
-            const result = await FaunaClient.getClient()
-            .query(fql `Certificate.byId(${id}).delete()`);
+            const {data: certificate} = await FaunaClient.getClient()
+            .query<DocumentT<Certificate>>(fql 
+                `let certificate = Certificate.byId(${id}).delete()
+                ${certificateProjection}`
+            );
 
             res.status(201).json({
                 success: true, 
-                data: result
+                data: certificate
             });
             return;
         } catch (error) {
