@@ -1,7 +1,8 @@
 import { Response, Request } from "express";
-import { DateStub, fql } from "fauna";
+import { DateStub, DocumentT, fql } from "fauna";
 import { projectSchema } from "../utils/validation_schema";
 import FaunaClient from "../fauna_client";
+import { Project } from "../models/models";
 
 type ProjectController = {
     createProject: (req: Request, res: Response) => Promise<void>;
@@ -10,9 +11,26 @@ type ProjectController = {
     getAllProject: (req: Request, res: Response) => Promise<void>;
 };
 
+
+const projectProjection = fql `
+    project {
+        id,
+        name,
+        description,
+        startDate,
+        endDate,
+        technologies,
+        url,
+        createdAt,
+        updatedAt,
+    }
+`;
+
+
 const projectController: ProjectController = {
     createProject: async (req: Request, res: Response) => {
         const { error } = projectSchema.validate(req.body);
+
         if (error) {
             res.status(400).json({
                 success: false,
@@ -21,11 +39,12 @@ const projectController: ProjectController = {
             return;
         }
 
+        const { name,description,startDate,endDate,technologies,url } = req.body;
+
         try {
-            const { name,description,startDate,endDate,technologies,url } = req.body;
-            const response = await FaunaClient
-            .getClient().query(
-                fql `Project.create({
+            const {data: project} = await FaunaClient
+            .getClient().query<DocumentT<Project>>(
+                fql `let project = Project.create({
                     name : ${name},
                     description : ${description},
                     startDate : ${startDate},
@@ -34,12 +53,13 @@ const projectController: ProjectController = {
                     url : ${url},
                     createdAt: ${DateStub.fromDate(new Date(Date.now()))},
                     updatedAt: ${DateStub.fromDate(new Date(Date.now()))}
-                })`
+                })
+                ${projectProjection}`
             );
 
             res.status(201).json({
                 success:true, 
-                data: response
+                data: project
             });
             return;
         } catch (error) {
@@ -142,4 +162,4 @@ const projectController: ProjectController = {
     },
 };
 
-export default ProjectController;
+export default projectController;

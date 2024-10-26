@@ -1,8 +1,8 @@
 import { Response, Request } from "express";
 import FaunaClient from "../fauna_client";
-import { DateStub, DocumentT, fql } from "fauna";
+import { DateStub, DocumentT, fql, QueryTimeoutError } from "fauna";
 import { blogSchema } from "../utils/validation_schema";
-import { Blog } from "../model/model";
+import { Blog } from "../models/models";
 
 type BlogController = {
     createBlog: (req: Request, res: Response) => Promise<void>;
@@ -13,7 +13,7 @@ type BlogController = {
 };
 
 const blogProjection = fql `
-    customer {
+    blog {
         id,
         title,
         content,
@@ -49,9 +49,10 @@ const blogController: BlogController = {
                 `
             );
 
-            res.status(201).json(blog);
+            res.status(200).json(blog);
             return;
         } catch (error) {
+            console.log(error);
             res.status(500).json({
                 success: false,
                 message: "Internal server error!",
@@ -59,8 +60,9 @@ const blogController: BlogController = {
         }
     },
     getSingleBlog: async (req: Request, res: Response) => {
-    
-      if (!req?.params?.id) {
+      const {id} = req.params;
+
+      if (!id) {
         res.status(400).json({
             success: false,
             message: "Bad request"
@@ -69,13 +71,12 @@ const blogController: BlogController = {
       }  
 
       try {
-        const {id} = req.params;
         const {data: blog} = await FaunaClient.getClient().query<DocumentT<Blog>>(
             fql `let blog = Blog.byId(${id})!
             ${blogProjection}`
         );
 
-        res.status(201).json({
+        res.status(200).json({
             success:true, 
             data: blog
         });
@@ -101,6 +102,7 @@ const blogController: BlogController = {
                 data: blogs ?? []
             });
         } catch (error) {
+            console.log(error);
             res.status(500).json({
                 success: false,
                 message : "Internal server error"
@@ -129,6 +131,7 @@ const blogController: BlogController = {
             });
             return;
         } catch (error) {
+            console.log(error);
             res.status(500).json({
                 success: false,
                 message : "Internal server error"
@@ -173,6 +176,7 @@ const blogController: BlogController = {
             return;
 
         } catch (error) {
+            console.log(error);
             res.status(500).json({
                 success: false,
                 message : "Internal server error"

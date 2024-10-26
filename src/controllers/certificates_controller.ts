@@ -2,7 +2,7 @@ import { Response, Request } from "express";
 import { DateStub, DocumentT, fql } from "fauna";
 import FaunaClient from "../fauna_client";
 import { certificateSchema } from "../utils/validation_schema";
-import { Certificate } from "../model/model";
+import { Certificate } from "../models/models";
 
 type CertificateController = {
     createCertificate: (req: Request, res: Response) => Promise<void>;
