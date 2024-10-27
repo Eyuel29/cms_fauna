@@ -1,7 +1,8 @@
 import { Response, Request } from "express";
-import { DateStub, fql } from "fauna";
+import { DateStub, DocumentT, fql, QueryRuntimeError, ServiceError } from "fauna";
 import { reviewSchema } from "../utils/validation_schema";
 import FaunaClient from "../fauna_client";
+import { Review } from "../models/models";
 
 type ReviewController = {
     createReview: (req: Request, res: Response) => Promise<void>;
@@ -9,6 +10,20 @@ type ReviewController = {
     updateReview: (req: Request, res: Response) => Promise<void>;
     getAllReview: (req: Request, res: Response) => Promise<void>;
 };
+
+
+const reviewProjection = fql `
+    review {
+        id,
+        reviewerName,
+        reviewerEmail,
+        rating,
+        content,
+        createdAt,
+        updatedAt
+    }
+`;
+
 
 const ReviewController: ReviewController = {
     createReview: async (req: Request, res: Response) => {
@@ -23,42 +38,47 @@ const ReviewController: ReviewController = {
 
         const { reviewerEmail,rating,content,reviewerName } = req.body;
         try {
-            const response = await FaunaClient
-            .getClient().query(
-                fql `Review.create({
+            const {data: review} = await FaunaClient
+            .getClient().query<DocumentT<Review>>(
+                fql `let review = Review.create({
                     reviewerEmail: ${reviewerEmail},
                     rating: ${rating},
                     content: ${content},
                     reviewerName: ${reviewerName},
                     createdAt: ${DateStub.fromDate(new Date(Date.now()))},
                     updatedAt: ${DateStub.fromDate(new Date(Date.now()))}
-                })`
+                })
+                ${reviewProjection}`
             );
 
             res.status(201).json({
                 success:true, 
-                data: response
+                data: review
             });
             return;
         } catch (error) {
-            console.log(error);
             res.status(500).json({
                 success: false,
                 message: "Internal server error!",
             });
         }
+        
     },
     getAllReview: async (req: Request, res: Response) => {
       try {
-        const result = await FaunaClient.getClient()
-        .query(fql `Review.all()`);
+        const {data: reviews} = await FaunaClient.getClient()
+        .query<DocumentT<Review>>(fql `
+            let reviews = Review.all()
+            reviews.map(review =>{
+                ${reviewProjection}
+            })
+        `);
         res.status(200).json({
             success:true, 
-            data: result
+            data: reviews ?? []
         });
         return;
       } catch (error) {
-        console.log(error);
         res.status(500).json({
             success: false,
             message : "Internal server error"
@@ -86,20 +106,22 @@ const ReviewController: ReviewController = {
 
         const { reviewerEmail,rating,content,reviewerName } = req.body;
         try {
-            const response = await FaunaClient
-            .getClient().query(
-                fql `Review.byId(${id}).update({
+            const {data:review} = await FaunaClient
+            .getClient().query<DocumentT<Review>>(
+                fql `let review = Review.byId(${id}).update({
                     reviewerEmail: ${reviewerEmail},
                     rating: ${rating},
                     content: ${content},
                     reviewerName: ${reviewerName},
                     updatedAt: ${DateStub.fromDate(new Date(Date.now()))}
-                })`
+                })
+                ${reviewProjection}
+                `
             );
 
             res.status(201).json({
                 success:true, 
-                data: response
+                data: review
             });
             return;
         } catch (error) {
@@ -120,16 +142,18 @@ const ReviewController: ReviewController = {
         }  
 
         try {
-            const result = await FaunaClient.getClient()
-            .query(fql `Review.byId(${id}).delete()`);
+            const {data: review} = await FaunaClient.getClient()
+            .query<DocumentT<Review>>(fql 
+                `Review.byId(${id}).delete()
+                ${reviewProjection}`
+            );
 
             res.status(200).json({
                 success: true, 
-                data: result
+                data: review
             });
             return;
         } catch (error) {
-            console.log(error);
             res.status(500).json({
                 success: false,
                 message : "Internal server error"
@@ -137,5 +161,30 @@ const ReviewController: ReviewController = {
         }
     },
 };
+
+const handleServiceError = (error: ServiceError, res: Response) => {
+    switch (error.code) {
+        case "document_not_found":
+            res.status(404).json({
+                success: false,
+                message: "Document not found!"
+            });
+            break;
+        case "constraint_failure":
+            res.status(409).json({
+                success: false,
+                message: "Document already exists!"
+            });
+            break;
+        case "invalid_query":
+            res.status(400).json({
+                success: false,
+                message: "Unable to create a document!"
+            });
+            break;
+        default:
+            break;
+    }
+}
 
 export default ReviewController;

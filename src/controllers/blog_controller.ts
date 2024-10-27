@@ -1,6 +1,6 @@
 import { Response, Request } from "express";
 import FaunaClient from "../fauna_client";
-import { DateStub, DocumentT, fql, QueryTimeoutError } from "fauna";
+import { DateStub, DocumentT, fql, QueryRuntimeError, QueryTimeoutError } from "fauna";
 import { blogSchema } from "../utils/validation_schema";
 import { Blog } from "../models/models";
 

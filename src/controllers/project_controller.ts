@@ -58,8 +58,7 @@ const projectController: ProjectController = {
             );
 
             res.status(201).json({
-                success:true, 
-                data: project
+                 project
             });
             return;
         } catch (error) {
@@ -72,11 +71,15 @@ const projectController: ProjectController = {
     },
     getAllProject: async (req: Request, res: Response) => {
       try {
-        const result = await FaunaClient.getClient()
-        .query(fql `Project.all()`);
+        const {data: projects} = await FaunaClient.getClient()
+        .query<DocumentT<Project>>(fql `Project.all()
+            projects.map(project => {
+                ${projectProjection}
+            })
+        `);
         res.status(200).json({
             success:true, 
-            data: result
+            data: projects
         });
         return;
       } catch (error) {
@@ -88,7 +91,8 @@ const projectController: ProjectController = {
       }
     },
     updateProject: async (req: Request, res: Response) => {
-        if (!req?.params?.id) {
+        const {id} = req.params;
+        if (!id) {
             res.status(400).json({
                 success: false,
                 message: "Bad request"
@@ -104,12 +108,11 @@ const projectController: ProjectController = {
             });
             return;
         }
+        const { name,description,startDate,endDate,technologies,url } = req.body;
 
         try {
-            const {id} = req.params;
-            const { name,description,startDate,endDate,technologies,url } = req.body;
-            const response = await FaunaClient
-            .getClient().query(
+            const {data: project} = await FaunaClient
+            .getClient().query<DocumentT<Project>>(
                 fql `Project.byId(${id}).update({
                     name : ${name},
                     description : ${description},
@@ -118,12 +121,14 @@ const projectController: ProjectController = {
                     technologies : ${technologies},
                     url : ${url},
                     updatedAt: ${DateStub.fromDate(new Date(Date.now()))}
-                })`
+                })
+                ${projectProjection}    
+                `
             );
 
             res.status(201).json({
                 success:true, 
-                data: response
+                data: project
             });
             return;
         } catch (error) {
@@ -134,7 +139,8 @@ const projectController: ProjectController = {
         }
     },
     deleteProject: async (req: Request, res: Response) => {
-        if (!req?.params?.id) {
+        const {id} = req.params;
+        if (!id) {
             res.status(400).json({
                 success: false,
                 message: "Bad request"
@@ -143,13 +149,15 @@ const projectController: ProjectController = {
         }  
 
         try {
-            const {id} = req.params;
-            const result = await FaunaClient.getClient()
-            .query(fql `Project.byId(${id}).delete()`);
+            const {data: project} = await FaunaClient.getClient()
+            .query<DocumentT<Project>>(
+                fql `Project.byId(${id}).delete()
+                ${projectProjection}`
+            );
 
             res.status(200).json({
                 success: true, 
-                data: result
+                data: project
             });
             return;
         } catch (error) {
