@@ -1,3 +1,4 @@
+import session from "express-session";
 import { DateStub, QueryValueObject } from "fauna";
 
 export interface User extends QueryValueObject{
@@ -65,4 +66,11 @@ export interface Review  extends QueryValueObject{
   content: string;
   createdAt: DateStub;
   updatedAt: DateStub;
+};
+
+
+export interface FaunaSession {
+  sid: string;
+  data: session.SessionData;
+  expiresAt: Date;
 };
