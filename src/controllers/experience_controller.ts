@@ -1,7 +1,6 @@
 import { Response, Request } from "express";
 import { DateStub, DocumentT, fql } from "fauna";
 import { experienceSchema } from "../utils/validation_schema";
-import FaunaClient from "../fauna_client";
 import { Experience } from "../models/models";
 import faunaClient from "../fauna_client";
 

@@ -1,73 +1,122 @@
 collection User {
-  id: String
   username: String
   email: String
   passwordHash: String
+
+  unique [.username, .email]
+
+  index byUsername {
+    terms [.username]
+  }
+
+  index byEmail {
+    terms [.email]
+  }
 }
 
 collection Subscriber {
-  id: String
   name: String 
   email: String
+
+  unique [.email]
+
+  user: Ref<User>
 }
 
-collection Certificate  {
-  id: String
+collection Certificate {
   title: String
   issuer: String
-  dateIssued: DateStub
+  dateIssued: Date
   description: String 
   url: String 
-  createdAt: DateStub
-  updatedAt: DateStub
+  createdAt: Date
+  updatedAt: Date
+
+  user: Ref<User>
+
+  unique [.user, .title]
+  
+  index byUser {
+    terms [.user]
+  }
 }
 
-collection Blog  {
-  id: String
+collection Blog {
   title: String
   content: String
-  authorName: String
-  authorId: String
-  createdAt: DateStub
-  updatedAt: DateStub
+  createdAt: Date
+  updatedAt: Date
+
+  author: Ref<User>
+
+  unique [.author, .title]
+  
+  index byAuthor {
+    terms [.author]
+  }
+
+  index sortedByDate {
+    values [.createdAt, .title, .author]
+  }
 }
 
-collection Experience  {
-  id: String
+collection Experience {
   companyName: String
   role: String
-  startDate: DateStub
-  endDate: DateStub 
+  startDate: Date
+  endDate: Date 
   description: String
-  createdAt: DateStub
-  updatedAt: DateStub
+  createdAt: Date
+  updatedAt: Date
+
+  user: Ref<User>
+
+  unique [.user, .companyName, .role]
+  
+  index byUser {
+    terms [.user]
+  }
 }
 
-collection Project  {
-  id: String
+collection Project {
   name: String
   description: String
-  startDate: DateStub
-  endDate: DateStub 
-  technologies: String[]
+  startDate: Date
+  endDate: Date 
+  technologies: []
   url: String 
-  createdAt: DateStub
-  updatedAt: DateStub
+  createdAt: Date
+  updatedAt: Date
+
+  user: Ref<User>
+
+  unique [.user, .name]
+  
+  index byUser {
+    terms [.user]
+  }
 }
 
-collection Review  {
-  id: String
+collection Review {
   reviewerName: String
   reviewerEmail: String
-  rating: number
   content: String
-  createdAt: DateStub
-  updatedAt: DateStub
+  createdAt: Date
+  updatedAt: Date
+
+  user: Ref<User>
+  
+  index byUser {
+    terms [.user]
+  }
 }
 
-
 collection FaunaSession {
-  sid: String
-  data: session.SessionData
+  session_id: String
   expiresAt: Date
+  user: Ref<User>
+  
+  index byUser {
+    terms [.user]
+  }
 }

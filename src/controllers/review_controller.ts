@@ -1,5 +1,5 @@
 import { Response, Request } from "express";
-import { DateStub, DocumentT, fql, QueryRuntimeError, ServiceError } from "fauna";
+import { DateStub, DocumentT, fql, ServiceError } from "fauna";
 import { reviewSchema } from "../utils/validation_schema";
 import { Review } from "../models/models";
 import faunaClient from "../fauna_client";

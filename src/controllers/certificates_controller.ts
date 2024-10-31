@@ -1,6 +1,5 @@
 import { Response, Request } from "express";
 import { DateStub, DocumentT, fql } from "fauna";
-import FaunaClient from "../fauna_client";
 import { certificateSchema } from "../utils/validation_schema";
 import { Certificate } from "../models/models";
 import faunaClient from "../fauna_client";
