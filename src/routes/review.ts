@@ -3,8 +3,8 @@ import reviewController from '../controllers/review_controller';
 const reviewRouter = Router();
   
 reviewRouter.post('/create', reviewController.createReview);
-reviewRouter.get('/all', reviewController.getAllReview);
-reviewRouter.put('/:id', reviewController.updateReview);
-reviewRouter.delete('/:id', reviewController.deleteReview);
+reviewRouter.get('/index', reviewController.getAllReview);
+reviewRouter.put('/update/:id', reviewController.updateReview);
+reviewRouter.delete('/delete/:id', reviewController.deleteReview);
 
 export default reviewRouter;

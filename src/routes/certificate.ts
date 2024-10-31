@@ -3,7 +3,7 @@ import certificateController from '../controllers/certificates_controller';
 const certificateRouter = Router();
   
 certificateRouter.post('/create', certificateController.createCertificate);
-certificateRouter.get('/all', certificateController.getAllCertificates);
-certificateRouter.delete('/:id', certificateController.deleteCertificate);
+certificateRouter.get('/index', certificateController.getAllCertificates);
+certificateRouter.delete('delete/:id', certificateController.deleteCertificate);
 
 export default certificateRouter;

@@ -7,7 +7,7 @@ interface CustomError extends Error {
 
 const errorHandler = (err: CustomError, req: Request, res: Response, next : NextFunction) => {
     const statusCode = err.statusCode || 500;
-    
+
     res.status(statusCode).json({
         success: false,
         message: err.message || 'An unknown error occurred',
