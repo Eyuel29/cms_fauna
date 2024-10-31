@@ -1,8 +1,8 @@
 import { Response, Request } from "express";
-import FaunaClient from "../fauna_client";
-import { DateStub, DocumentT, fql, QueryRuntimeError, QueryTimeoutError } from "fauna";
+import { DateStub, DocumentT, fql } from "fauna";
 import { blogSchema } from "../utils/validation_schema";
 import { Blog } from "../models/models";
+import faunaClient from "../fauna_client";
 
 type BlogController = {
     createBlog: (req: Request, res: Response) => Promise<void>;
@@ -37,7 +37,7 @@ const blogController: BlogController = {
 
         try {
             const { title, content, author } = req.body;
-            const {data: blog} = await FaunaClient.getClient().query<DocumentT<Blog>>(
+            const {data: blog} = await faunaClient.query<DocumentT<Blog>>(
                 fql `let blog = Blog.create({
                     title: ${title},
                     content: ${content},
@@ -71,7 +71,7 @@ const blogController: BlogController = {
       }  
 
       try {
-        const {data: blog} = await FaunaClient.getClient().query<DocumentT<Blog>>(
+        const {data: blog} = await faunaClient.query<DocumentT<Blog>>(
             fql `let blog = Blog.byId(${id})!
             ${blogProjection}`
         );
@@ -91,7 +91,7 @@ const blogController: BlogController = {
     },
     getAllBlogs: async (req: Request, res: Response) => {
         try {
-            const {data: blogs} = await FaunaClient.getClient().query<DocumentT<Blog>>(
+            const {data: blogs} = await faunaClient.query<DocumentT<Blog>>(
                 fql `let blogs = Blog.all()
                     blogs.map(blog => {
                         ${blogProjection}
@@ -120,7 +120,7 @@ const blogController: BlogController = {
         }
 
         try {
-            const {data: blog} = await FaunaClient.getClient().query<DocumentT<Blog>>(
+            const {data: blog} = await faunaClient.query<DocumentT<Blog>>(
                 fql `let blog = Blog.byId(${id}).delete()
                 ${blogProjection}`
             );
@@ -159,7 +159,7 @@ const blogController: BlogController = {
         const { title, content, author } = req.body;
 
         try {
-            const {data: blog} = await FaunaClient.getClient().query<DocumentT<Blog>>(
+            const {data: blog} = await faunaClient.query<DocumentT<Blog>>(
                 fql `let blog = Blog.byId(${id}).update({   
                     title: ${title},
                     content: ${content},

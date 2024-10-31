@@ -1,0 +1,73 @@
+collection User {
+  id: String
+  username: String
+  email: String
+  passwordHash: String
+}
+
+collection Subscriber {
+  id: String
+  name: String 
+  email: String
+}
+
+collection Certificate  {
+  id: String
+  title: String
+  issuer: String
+  dateIssued: DateStub
+  description: String 
+  url: String 
+  createdAt: DateStub
+  updatedAt: DateStub
+}
+
+collection Blog  {
+  id: String
+  title: String
+  content: String
+  authorName: String
+  authorId: String
+  createdAt: DateStub
+  updatedAt: DateStub
+}
+
+collection Experience  {
+  id: String
+  companyName: String
+  role: String
+  startDate: DateStub
+  endDate: DateStub 
+  description: String
+  createdAt: DateStub
+  updatedAt: DateStub
+}
+
+collection Project  {
+  id: String
+  name: String
+  description: String
+  startDate: DateStub
+  endDate: DateStub 
+  technologies: String[]
+  url: String 
+  createdAt: DateStub
+  updatedAt: DateStub
+}
+
+collection Review  {
+  id: String
+  reviewerName: String
+  reviewerEmail: String
+  rating: number
+  content: String
+  createdAt: DateStub
+  updatedAt: DateStub
+}
+
+
+collection FaunaSession {
+  sid: String
+  data: session.SessionData
+  expiresAt: Date
+}

@@ -1,8 +1,8 @@
 import { Response, Request } from "express";
 import { DateStub, DocumentT, fql, QueryRuntimeError, ServiceError } from "fauna";
 import { reviewSchema } from "../utils/validation_schema";
-import FaunaClient from "../fauna_client";
 import { Review } from "../models/models";
+import faunaClient from "../fauna_client";
 
 type ReviewController = {
     createReview: (req: Request, res: Response) => Promise<void>;
@@ -38,8 +38,8 @@ const ReviewController: ReviewController = {
 
         const { reviewerEmail,rating,content,reviewerName } = req.body;
         try {
-            const {data: review} = await FaunaClient
-            .getClient().query<DocumentT<Review>>(
+            const {data: review} = await faunaClient
+                .query<DocumentT<Review>>(
                 fql `let review = Review.create({
                     reviewerEmail: ${reviewerEmail},
                     rating: ${rating},
@@ -66,7 +66,7 @@ const ReviewController: ReviewController = {
     },
     getAllReview: async (req: Request, res: Response) => {
       try {
-        const {data: reviews} = await FaunaClient.getClient()
+        const {data: reviews} = await faunaClient
         .query<DocumentT<Review>>(fql `
             let reviews = Review.all()
             reviews.map(review =>{
@@ -106,8 +106,8 @@ const ReviewController: ReviewController = {
 
         const { reviewerEmail,rating,content,reviewerName } = req.body;
         try {
-            const {data:review} = await FaunaClient
-            .getClient().query<DocumentT<Review>>(
+            const {data:review} = await faunaClient
+                .query<DocumentT<Review>>(
                 fql `let review = Review.byId(${id}).update({
                     reviewerEmail: ${reviewerEmail},
                     rating: ${rating},
@@ -142,7 +142,7 @@ const ReviewController: ReviewController = {
         }  
 
         try {
-            const {data: review} = await FaunaClient.getClient()
+            const {data: review} = await faunaClient
             .query<DocumentT<Review>>(fql 
                 `Review.byId(${id}).delete()
                 ${reviewProjection}`

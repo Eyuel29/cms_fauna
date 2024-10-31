@@ -1,8 +1,8 @@
 import { Response, Request } from "express";
 import { DateStub, DocumentT, fql } from "fauna";
 import { projectSchema } from "../utils/validation_schema";
-import FaunaClient from "../fauna_client";
 import { Project } from "../models/models";
+import faunaClient from "../fauna_client";
 
 type ProjectController = {
     createProject: (req: Request, res: Response) => Promise<void>;
@@ -42,8 +42,7 @@ const projectController: ProjectController = {
         const { name,description,startDate,endDate,technologies,url } = req.body;
 
         try {
-            const {data: project} = await FaunaClient
-            .getClient().query<DocumentT<Project>>(
+            const {data: project} = await faunaClient.query<DocumentT<Project>>(
                 fql `let project = Project.create({
                     name : ${name},
                     description : ${description},
@@ -71,7 +70,7 @@ const projectController: ProjectController = {
     },
     getAllProject: async (req: Request, res: Response) => {
       try {
-        const {data: projects} = await FaunaClient.getClient()
+        const {data: projects} = await faunaClient
         .query<DocumentT<Project>>(fql `Project.all()
             projects.map(project => {
                 ${projectProjection}
@@ -111,8 +110,8 @@ const projectController: ProjectController = {
         const { name,description,startDate,endDate,technologies,url } = req.body;
 
         try {
-            const {data: project} = await FaunaClient
-            .getClient().query<DocumentT<Project>>(
+            const {data: project} = await faunaClient
+            .query<DocumentT<Project>>(
                 fql `Project.byId(${id}).update({
                     name : ${name},
                     description : ${description},
@@ -149,7 +148,7 @@ const projectController: ProjectController = {
         }  
 
         try {
-            const {data: project} = await FaunaClient.getClient()
+            const {data: project} = await faunaClient
             .query<DocumentT<Project>>(
                 fql `Project.byId(${id}).delete()
                 ${projectProjection}`

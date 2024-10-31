@@ -3,6 +3,7 @@ import { DateStub, DocumentT, fql } from "fauna";
 import FaunaClient from "../fauna_client";
 import { certificateSchema } from "../utils/validation_schema";
 import { Certificate } from "../models/models";
+import faunaClient from "../fauna_client";
 
 type CertificateController = {
     createCertificate: (req: Request, res: Response) => Promise<void>;
@@ -39,8 +40,8 @@ const certificateController: CertificateController = {
         const { title,issuer,dateIssued,description,url } = req.body;
 
         try {
-            const {data: certificate} = await FaunaClient
-            .getClient().query<DocumentT<Certificate>>(
+            const {data: certificate} = await faunaClient
+                .query<DocumentT<Certificate>>(
                 fql `let certificate = Certificate.create({
                     title: ${title},
                     issuer: ${issuer},
@@ -68,7 +69,7 @@ const certificateController: CertificateController = {
     },
     getAllCertificates: async (req: Request, res: Response) => {
       try {
-        const {data: certificates} = await FaunaClient.getClient()
+        const {data: certificates} = await faunaClient
         .query<DocumentT<Certificate>>(fql `
             let certificates = Certificate.all()
             certificates.map( certificate =>{
@@ -101,7 +102,7 @@ const certificateController: CertificateController = {
         }  
 
         try {
-            const {data: certificate} = await FaunaClient.getClient()
+            const {data: certificate} = await faunaClient
             .query<DocumentT<Certificate>>(fql 
                 `let certificate = Certificate.byId(${id}).delete()
                 ${certificateProjection}`

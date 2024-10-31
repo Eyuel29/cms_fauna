@@ -3,6 +3,7 @@ import { DateStub, DocumentT, fql } from "fauna";
 import { experienceSchema } from "../utils/validation_schema";
 import FaunaClient from "../fauna_client";
 import { Experience } from "../models/models";
+import faunaClient from "../fauna_client";
 
 type ExprienceController = {
     createExprience: (req: Request, res: Response) => Promise<void>;
@@ -37,8 +38,7 @@ const exprienceController: ExprienceController = {
 
         const { companyName,role,startDate,endDate,description } = req.body;
         try {
-            const {data: exprience} = await FaunaClient
-            .getClient().query<DocumentT<Experience>>(
+            const {data: exprience} = await faunaClient.query<DocumentT<Experience>>(
                 fql `let exprience = Exprience.create({
                     companyName : ${companyName},
                     role : ${role},
@@ -66,7 +66,7 @@ const exprienceController: ExprienceController = {
     },
     getAllExpriences: async (req: Request, res: Response) => {
       try {
-        const {data:experience} = await FaunaClient.getClient()
+        const {data:experience} = await faunaClient
         .query<DocumentT<Experience>>(fql `
             let experience = Exprience.all()
             ${experienceProjection}
@@ -107,7 +107,7 @@ const exprienceController: ExprienceController = {
 
         try {
 
-            const {data:experience} = await FaunaClient.getClient().query<DocumentT<Experience>>(
+            const {data:experience} = await faunaClient.query<DocumentT<Experience>>(
                 fql `let experience = Exprience.byId(${id}).update(
                     companyName : ${companyName},
                     role : ${role},
@@ -143,7 +143,7 @@ const exprienceController: ExprienceController = {
         }  
 
         try {
-            const {data: experience} = await FaunaClient.getClient()
+            const {data: experience} = await faunaClient
             .query<DocumentT<Experience>>(fql 
                 `let experience = Exprience.byId(${id}).delete()
                 ${experienceProjection}`

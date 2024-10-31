@@ -1,7 +1,4 @@
 import { Response, Request } from "express";
-import FaunaClient from "../fauna_client";
-import { DateStub, DocumentT, fql, QueryRuntimeError, QueryTimeoutError } from "fauna";
-import { User } from "../models/models";
 
 type AuthController = {
     signUp: (req: Request, res: Response) => Promise<void>;
@@ -16,7 +13,7 @@ type AuthController = {
 
 const blogController: AuthController = {
     signUp: async (req: Request, res: Response) => {
-          
+        
     },
     signIn: async (req: Request, res: Response) => {
 
