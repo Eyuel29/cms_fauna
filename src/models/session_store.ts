@@ -13,7 +13,7 @@ class AuthSessionStore extends session.Store {
 
   async get(sid: string, callback: (err: any, session?: session.SessionData | null) => void): Promise<void> {
     try {
-      const { data } = await this.client.query<DocumentT<FaunaSession>>(
+      const { data } = await this.client.query(
         fql`let session = Session.byId(${sid})
             { data: session.data }`
       );
