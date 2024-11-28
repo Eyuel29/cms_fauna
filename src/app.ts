@@ -8,10 +8,10 @@ dotenv.config();
 const port = process.env.PORT || 3000;
 
 const app = express();
-// app.use(morgan("tiny"));
+app.use(morgan("tiny"));
 app.use(express.json());
 
-
+    
 app.use('/api', router);
 
 app.use(errorHandler);
