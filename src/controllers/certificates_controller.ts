@@ -3,6 +3,7 @@ import { DateStub, DocumentT, fql } from "fauna";
 import { certificateSchema } from "../utils/validation_schema";
 import { Certificate } from "../models/models";
 import faunaClient from "../fauna_client";
+import {validateCerfiticate} from "../middlewares/validate_files";
 
 type CertificateController = {
     createCertificate: (req: Request, res: Response) => Promise<void>;
@@ -27,6 +28,8 @@ const certificateProjection = fql `
 
 const certificateController: CertificateController = {
     createCertificate: async (req: Request, res: Response) => {
+        console.log(req.file);
+        
         const { error } = certificateSchema.validate(req.body);
         if (error) {
             res.status(400).json({
@@ -39,8 +42,7 @@ const certificateController: CertificateController = {
         const { title,issuer,dateIssued,description,url } = req.body;
 
         try {
-            const {data: certificate} = await faunaClient
-                .query<DocumentT<Certificate>>(
+            const {data: certificate} = await faunaClient.query<DocumentT<Certificate>>(
                 fql `let certificate = Certificate.create({
                     title: ${title},
                     issuer: ${issuer},
@@ -92,6 +94,7 @@ const certificateController: CertificateController = {
     },
     deleteCertificate: async (req: Request, res: Response) => {
         const {id} = req.params;
+
         if (!id) {
             res.status(400).json({
                 success: false,
@@ -111,6 +114,7 @@ const certificateController: CertificateController = {
                 success: true, 
                 data: certificate
             });
+            
             return;
         } catch (error) {
             console.log(error);
