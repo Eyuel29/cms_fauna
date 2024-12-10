@@ -1,14 +1,14 @@
-import { Response, Request } from "express";
+import { Response, Request, NextFunction } from "express";
 import { DateStub, DocumentT, fql } from "fauna";
 import { certificateSchema } from "../utils/validation_schema";
 import { Certificate } from "../models/models";
-import faunaClient from "../fauna_client";
+import faunaClient from "../config/fauna_client";
 import {validateCerfiticate} from "../middlewares/validate_files";
 
 type CertificateController = {
-    createCertificate: (req: Request, res: Response) => Promise<void>;
-    deleteCertificate: (req: Request, res: Response) => Promise<void>;
-    getAllCertificates: (req: Request, res: Response) => Promise<void>;
+    createCertificate: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    deleteCertificate: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    getAllCertificates: (req: Request, res: Response, next: NextFunction) => Promise<void>;
 };
 
 
@@ -27,7 +27,7 @@ const certificateProjection = fql `
 
 
 const certificateController: CertificateController = {
-    createCertificate: async (req: Request, res: Response) => {
+    createCertificate: async (req: Request, res: Response, next: NextFunction) => {
         console.log(req.file);
         
         const { error } = certificateSchema.validate(req.body);
@@ -61,14 +61,10 @@ const certificateController: CertificateController = {
             });
             return;
         } catch (error) {
-            console.log(error);
-            res.status(500).json({
-                success: false,
-                message: "Internal server error!",
-            });     
+            next(error);     
         }
     },
-    getAllCertificates: async (req: Request, res: Response) => {
+    getAllCertificates: async (req: Request, res: Response, next: NextFunction) => {
       try {
         const {data: certificates} = await faunaClient
         .query<DocumentT<Certificate>>(fql `
@@ -85,14 +81,10 @@ const certificateController: CertificateController = {
         });
         return;
       } catch (error) {
-        console.log(error);
-        res.status(500).json({
-            success: false,
-            message : "Internal server error"
-        });     
+        next(error);
       }
     },
-    deleteCertificate: async (req: Request, res: Response) => {
+    deleteCertificate: async (req: Request, res: Response, next: NextFunction) => {
         const {id} = req.params;
 
         if (!id) {
@@ -117,11 +109,7 @@ const certificateController: CertificateController = {
             
             return;
         } catch (error) {
-            console.log(error);
-            res.status(500).json({
-                success: false,
-                message : "Internal server error"
-            });     
+            next(error);     
         }
     },
 };

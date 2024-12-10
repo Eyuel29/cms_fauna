@@ -116,6 +116,10 @@ collection FaunaSession {
   expiresAt: Date
   user: Ref<User>
   
+  index bySessionId {
+    terms [.session_id]
+  }
+
   index byUser {
     terms [.user]
   }

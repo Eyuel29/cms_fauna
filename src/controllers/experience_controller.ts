@@ -1,14 +1,14 @@
-import { Response, Request } from "express";
+import { Response, Request, NextFunction } from "express";
 import { DateStub, DocumentT, fql } from "fauna";
 import { experienceSchema } from "../utils/validation_schema";
 import { Experience } from "../models/models";
-import faunaClient from "../fauna_client";
+import faunaClient from "../config/fauna_client";
 
 type ExprienceController = {
-    createExprience: (req: Request, res: Response) => Promise<void>;
-    deleteExprience: (req: Request, res: Response) => Promise<void>;
-    updateExprience: (req: Request, res: Response) => Promise<void>;
-    getAllExpriences: (req: Request, res: Response) => Promise<void>;
+    createExprience: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    deleteExprience: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    updateExprience: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    getAllExpriences: (req: Request, res: Response, next: NextFunction) => Promise<void>;
 };
 
 const experienceProjection = fql `
@@ -25,7 +25,7 @@ const experienceProjection = fql `
 `;
 
 const exprienceController: ExprienceController = {
-    createExprience: async (req: Request, res: Response) => {
+    createExprience: async (req: Request, res: Response, next: NextFunction) => {
         const { error } = experienceSchema.validate(req.body);
         if (error) {
             res.status(400).json({
@@ -56,14 +56,10 @@ const exprienceController: ExprienceController = {
             });
             return;
         } catch (error) {
-            console.log(error);
-            res.status(500).json({
-                success: false,
-                message: "Internal server error!",
-            });
+            next(error);
         }
     },
-    getAllExpriences: async (req: Request, res: Response) => {
+    getAllExpriences: async (req: Request, res: Response, next: NextFunction) => {
       try {
         const {data:experience} = await faunaClient
         .query<DocumentT<Experience>>(fql `
@@ -76,14 +72,10 @@ const exprienceController: ExprienceController = {
         });
         return;
       } catch (error) {
-        console.log(error);
-        res.status(500).json({
-            success: false,
-            message : "Internal server error"
-        });     
+        next(error);
       }
     },
-    updateExprience: async (req: Request, res: Response) => {
+    updateExprience: async (req: Request, res: Response, next: NextFunction) => {
         const {id} = req.params;
         if (!id) {
             res.status(400).json({
@@ -125,13 +117,10 @@ const exprienceController: ExprienceController = {
             });
             return;
         } catch (error) {
-            res.status(500).json({
-                success: false,
-                message : "Internal server error"
-            });     
+            next(error);     
         }
     },
-    deleteExprience: async (req: Request, res: Response) => {
+    deleteExprience: async (req: Request, res: Response, next: NextFunction) => {
         const {id} = req.params;
         if (!id) {
             res.status(400).json({
@@ -154,11 +143,7 @@ const exprienceController: ExprienceController = {
             });
             return;
         } catch (error) {
-            console.log(error);
-            res.status(500).json({
-                success: false,
-                message : "Internal server error"
-            });     
+            next(error);     
         }
     },
 };

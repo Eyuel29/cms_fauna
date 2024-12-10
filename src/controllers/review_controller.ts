@@ -1,14 +1,14 @@
-import { Response, Request } from "express";
+import { Response, Request, NextFunction } from "express";
 import { DateStub, DocumentT, fql, ServiceError } from "fauna";
 import { reviewSchema } from "../utils/validation_schema";
 import { Review } from "../models/models";
-import faunaClient from "../fauna_client";
+import faunaClient from "../config/fauna_client";
 
 type ReviewController = {
-    createReview: (req: Request, res: Response) => Promise<void>;
-    deleteReview: (req: Request, res: Response) => Promise<void>;
-    updateReview: (req: Request, res: Response) => Promise<void>;
-    getAllReview: (req: Request, res: Response) => Promise<void>;
+    createReview: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    deleteReview: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    updateReview: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    getAllReview: (req: Request, res: Response, next: NextFunction) => Promise<void>;
 };
 
 
@@ -26,7 +26,7 @@ const reviewProjection = fql `
 
 
 const ReviewController: ReviewController = {
-    createReview: async (req: Request, res: Response) => {
+    createReview: async (req: Request, res: Response, next: NextFunction) => {
         const { error } = reviewSchema.validate(req.body);
         if (error) {
             res.status(400).json({
@@ -57,14 +57,11 @@ const ReviewController: ReviewController = {
             });
             return;
         } catch (error) {
-            res.status(500).json({
-                success: false,
-                message: "Internal server error!",
-            });
+            next(error);
         }
         
     },
-    getAllReview: async (req: Request, res: Response) => {
+    getAllReview: async (req: Request, res: Response, next: NextFunction) => {
       try {
         const {data: reviews} = await faunaClient
         .query<DocumentT<Review>>(fql `
@@ -79,13 +76,10 @@ const ReviewController: ReviewController = {
         });
         return;
       } catch (error) {
-        res.status(500).json({
-            success: false,
-            message : "Internal server error"
-        });     
+        next(error);
       }
     },
-    updateReview: async (req: Request, res: Response) => {
+    updateReview: async (req: Request, res: Response, next: NextFunction) => {
         const {id} = req.params;
         if (!id) {
             res.status(400).json({
@@ -125,13 +119,10 @@ const ReviewController: ReviewController = {
             });
             return;
         } catch (error) {
-            res.status(500).json({
-                success: false,
-                message : "Internal server error"
-            });     
+            next(error);     
         }
     },
-    deleteReview: async (req: Request, res: Response) => {
+    deleteReview: async (req: Request, res: Response, next: NextFunction) => {
         const {id} = req.params;
         if (!id) {
             res.status(400).json({
@@ -154,10 +145,7 @@ const ReviewController: ReviewController = {
             });
             return;
         } catch (error) {
-            res.status(500).json({
-                success: false,
-                message : "Internal server error"
-            });     
+            next(error);     
         }
     },
 };

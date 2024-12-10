@@ -7,13 +7,15 @@
   "author": "Joel Dejene",
   "license": "MIT",
   "dependencies": {
+    "@types/nodemailer": "^6.4.17",
     "bcrypt": "^5.1.1",
     "cookie-parser": "^1.4.7",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "fauna": "^2.2.0",
     "joi": "^17.13.3",
-    "multer": "^1.4.5-lts.1"
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.9.16"
   },
   "scripts": {
     "start": "nodemon"

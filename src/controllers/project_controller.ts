@@ -1,14 +1,14 @@
-import { Response, Request } from "express";
+import { Response, Request, NextFunction } from "express";
 import { DateStub, DocumentT, fql } from "fauna";
 import { projectSchema } from "../utils/validation_schema";
 import { Project } from "../models/models";
-import faunaClient from "../fauna_client";
+import faunaClient from "../config/fauna_client";
 
 type ProjectController = {
-    createProject: (req: Request, res: Response) => Promise<void>;
-    deleteProject: (req: Request, res: Response) => Promise<void>;
-    updateProject: (req: Request, res: Response) => Promise<void>;
-    getAllProject: (req: Request, res: Response) => Promise<void>;
+    createProject: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    deleteProject: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    updateProject: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    getAllProject: (req: Request, res: Response, next: NextFunction) => Promise<void>;
 };
 
 
@@ -28,7 +28,7 @@ const projectProjection = fql `
 
 
 const projectController: ProjectController = {
-    createProject: async (req: Request, res: Response) => {
+    createProject: async (req: Request, res: Response, next: NextFunction) => {
         const { error } = projectSchema.validate(req.body);
 
         if (error) {
@@ -61,14 +61,10 @@ const projectController: ProjectController = {
             });
             return;
         } catch (error) {
-            console.log(error);
-            res.status(500).json({
-                success: false,
-                message: "Internal server error!",
-            });
+            next(error);
         }
     },
-    getAllProject: async (req: Request, res: Response) => {
+    getAllProject: async (req: Request, res: Response, next: NextFunction) => {
       try {
         const {data: projects} = await faunaClient
         .query<DocumentT<Project>>(fql `Project.all()
@@ -82,14 +78,10 @@ const projectController: ProjectController = {
         });
         return;
       } catch (error) {
-        console.log(error);
-        res.status(500).json({
-            success: false,
-            message : "Internal server error"
-        });     
+        next(error);     
       }
     },
-    updateProject: async (req: Request, res: Response) => {
+    updateProject: async (req: Request, res: Response, next: NextFunction) => {
         const {id} = req.params;
         if (!id) {
             res.status(400).json({
@@ -131,13 +123,10 @@ const projectController: ProjectController = {
             });
             return;
         } catch (error) {
-            res.status(500).json({
-                success: false,
-                message : "Internal server error"
-            });     
+            next(error);
         }
     },
-    deleteProject: async (req: Request, res: Response) => {
+    deleteProject: async (req: Request, res: Response, next: NextFunction) => {
         const {id} = req.params;
         if (!id) {
             res.status(400).json({
@@ -160,11 +149,7 @@ const projectController: ProjectController = {
             });
             return;
         } catch (error) {
-            console.log(error);
-            res.status(500).json({
-                success: false,
-                message : "Internal server error"
-            });     
+            next(error);
         }
     },
 };

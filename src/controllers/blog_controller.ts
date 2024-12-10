@@ -1,15 +1,15 @@
-import { Response, Request } from "express";
+import { Response, Request, NextFunction } from "express";
 import { DateStub, DocumentT, fql } from "fauna";
 import { blogSchema } from "../utils/validation_schema";
 import { Blog } from "../models/models";
-import faunaClient from "../fauna_client";
+import faunaClient from "../config/fauna_client";
 
 type BlogController = {
-    createBlog: (req: Request, res: Response) => Promise<void>;
-    getSingleBlog: (req: Request, res: Response) => Promise<void>;
-    getAllBlogs: (req: Request, res: Response) => Promise<void>;
-    updateBlog: (req: Request, res: Response) => Promise<void>;
-    deleteBlog: (req: Request, res: Response) => Promise<void>;
+    createBlog: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    getSingleBlog: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    getAllBlogs: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    updateBlog: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    deleteBlog: (req: Request, res: Response, next: NextFunction) => Promise<void>;
 };
 
 const blogProjection = fql `
@@ -25,7 +25,7 @@ const blogProjection = fql `
 `;
 
 const blogController: BlogController = {
-    createBlog: async (req: Request, res: Response) => {
+    createBlog: async (req: Request, res: Response, next: NextFunction) => {
         const { error } = blogSchema.validate(req.body);
         if (error) {
             res.status(400).json({
@@ -52,17 +52,13 @@ const blogController: BlogController = {
             res.status(200).json(blog);
             return;
         } catch (error) {
-            console.log(error);
-            res.status(500).json({
-                success: false,
-                message: "Internal server error!",
-            });     
+            next(error);
         }
     },
-    getSingleBlog: async (req: Request, res: Response) => {
+    getSingleBlog: async (req: Request, res: Response, next: NextFunction) => {
       const {id} = req.params;
 
-      if (!id) {
+      if (!id || isNaN(Number(id))) {
         res.status(400).json({
             success: false,
             message: "Bad request"
@@ -83,13 +79,10 @@ const blogController: BlogController = {
         return;
 
       } catch (error) {
-        res.status(500).json({
-            success: false,
-            message : "Internal server error"
-        });     
+        next(error);
       }
     },
-    getAllBlogs: async (req: Request, res: Response) => {
+    getAllBlogs: async (req: Request, res: Response, next: NextFunction) => {
         try {
             const {data: blogs} = await faunaClient.query<DocumentT<Blog>>(
                 fql `let blogs = Blog.all()
@@ -102,14 +95,10 @@ const blogController: BlogController = {
                 data: blogs ?? []
             });
         } catch (error) {
-            console.log(error);
-            res.status(500).json({
-                success: false,
-                message : "Internal server error"
-            });     
+            next(error);     
         }
     },
-    deleteBlog: async (req: Request, res: Response) => {
+    deleteBlog: async (req: Request, res: Response, next: NextFunction) => {
         const {id} = req.params;
         if (!id) {
             res.status(400).json({
@@ -131,14 +120,10 @@ const blogController: BlogController = {
             });
             return;
         } catch (error) {
-            console.log(error);
-            res.status(500).json({
-                success: false,
-                message : "Internal server error"
-            });     
+            next(error);     
         }  
     },
-    updateBlog: async (req: Request, res: Response) => {
+    updateBlog: async (req: Request, res: Response, next: NextFunction) => {
         const {id} = req.params;
         if (!id) {
             res.status(400).json({
@@ -176,11 +161,7 @@ const blogController: BlogController = {
             return;
 
         } catch (error) {
-            console.log(error);
-            res.status(500).json({
-                success: false,
-                message : "Internal server error"
-            });     
+            next(error);     
         }
     },
 };

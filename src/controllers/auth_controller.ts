@@ -1,39 +1,39 @@
-import { Response, Request } from "express";
+import { Response, Request, NextFunction } from "express";
 
 type AuthController = {
-    signUp: (req: Request, res: Response) => Promise<void>;
-    signIn: (req: Request, res: Response) => Promise<void>;
-    signOut: (req: Request, res: Response) => Promise<void>;
-    verify: (req: Request, res: Response) => Promise<void>;
-    getVerificationCode: (req: Request, res: Response) => Promise<void>;
-    changePassword: (req: Request, res: Response) => Promise<void>;
-    updatePassword: (req: Request, res: Response) => Promise<void>;
-    recoverAccount: (req: Request, res: Response) => Promise<void>;
+    signUp: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    signIn: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    signOut: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    verify: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    getVerificationCode: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    changePassword: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    updatePassword: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    recoverAccount: (req: Request, res: Response, next: NextFunction) => Promise<void>;
 };
 
 const blogController: AuthController = {
-    signUp: async (req: Request, res: Response) => {
-        
-    },
-    signIn: async (req: Request, res: Response) => {
+    signUp: async (req: Request, res: Response, next: NextFunction) => {
 
     },
-    signOut: async (req: Request, res: Response) => {
-        
-    },
-    verify: async (req: Request, res: Response) => {
+    signIn: async (req: Request, res: Response, next: NextFunction) => {
 
     },
-    getVerificationCode: async (req: Request, res: Response) => {
+    signOut: async (req: Request, res: Response, next: NextFunction) => {
+        
+    },
+    verify: async (req: Request, res: Response, next: NextFunction) => {
+        
+    },
+    getVerificationCode: async (req: Request, res: Response, next: NextFunction) => {
 
     },
-    changePassword: async (req: Request, res: Response) => {
+    changePassword: async (req: Request, res: Response, next: NextFunction) => {
         
     },
-    updatePassword: async (req: Request, res: Response) => {
+    updatePassword: async (req: Request, res: Response, next: NextFunction) => {
         
     },
-    recoverAccount: async (req: Request, res: Response) => {
+    recoverAccount: async (req: Request, res: Response, next: NextFunction) => {
         
     }
 };
