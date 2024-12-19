@@ -1,4 +1,7 @@
 import { Response, Request, NextFunction } from "express";
+import { FaunaSession } from "../models/models";
+import { DocumentT, fql } from "fauna";
+import faunaClient from "../config/fauna_client";
 
 type AuthController = {
     signUp: (req: Request, res: Response, next: NextFunction) => Promise<void>;
@@ -11,15 +14,46 @@ type AuthController = {
     recoverAccount: (req: Request, res: Response, next: NextFunction) => Promise<void>;
 };
 
+const sessionProjection = fql `
+    blog {
+        session_id,
+        expiresAt,
+        user
+    }
+`;
+
 const blogController: AuthController = {
     signUp: async (req: Request, res: Response, next: NextFunction) => {
-
+        
     },
     signIn: async (req: Request, res: Response, next: NextFunction) => {
 
     },
     signOut: async (req: Request, res: Response, next: NextFunction) => {
-        
+        try {
+            const cookies = req.cookies;
+
+            if (!cookies?.session_id) {
+                res.sendStatus(204);
+                return;
+            }
+    
+            const cookieSessionId = cookies.session_id;
+    
+            const {data: session} = await faunaClient.query<DocumentT<FaunaSession>>(
+                fql `let blog = Blog.bySessionId(${cookieSessionId}).delete()
+                ${sessionProjection}`
+            );
+    
+            res.clearCookie('session_id', { httpOnly: true, sameSite: 'strict', secure: true });
+            res.status(200).json({
+                    success: true,
+                    message: "Logged out!",
+                }
+            );
+        } catch (error) {
+            next(error);
+        }
     },
     verify: async (req: Request, res: Response, next: NextFunction) => {
         

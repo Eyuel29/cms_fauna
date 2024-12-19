@@ -16,7 +16,7 @@ const verifyAuth = async (req: Request, res: Response, next: NextFunction) =>{
         const {data: session} = await faunaClient.query<DocumentT<FaunaSession>>(
             fql `let session = FaunaSession.bySessionId(${session_id ?? "234523452345345"})!
             ${sessionProjection}`
-        );
+        ); 
     
         console.log(session);
         res.end();
