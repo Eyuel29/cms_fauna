@@ -1,7 +1,8 @@
 import { Response, Request, NextFunction } from "express";
-import { FaunaSession } from "../models/models";
+import { FaunaSession, User } from "../models/models";
 import { DocumentT, fql } from "fauna";
 import faunaClient from "../config/fauna_client";
+import { userSchema } from "../utils/validation_schema";
 
 type AuthController = {
     signUp: (req: Request, res: Response, next: NextFunction) => Promise<void>;
@@ -15,16 +16,53 @@ type AuthController = {
 };
 
 const sessionProjection = fql `
-    blog {
+    session {
         session_id,
         expiresAt,
         user
     }
 `;
 
+
+const userProjection = fql `
+    user {
+        username,
+        email
+    }
+`;
+
 const blogController: AuthController = {
     signUp: async (req: Request, res: Response, next: NextFunction) => {
-        
+        try {
+            const {error: userValidationError} = userSchema.validate(req?.body);
+            
+            if (userValidationError) {
+                next(userValidationError)
+                return;
+            }
+
+            const {
+                username,
+                email,
+                passwordHash,
+            } = req?.body;
+
+            const {data: user} = await faunaClient.query<DocumentT<User>>(
+                fql `let user = User.create(
+                    username: ${username},
+                    email: ${email},
+                    passwordHash: ${passwordHash}
+                )
+                ${userProjection}`
+            );
+
+            if (req.file) {
+                // todo
+            }
+
+        } catch (error) {
+            next(error);
+        }
     },
     signIn: async (req: Request, res: Response, next: NextFunction) => {
 
