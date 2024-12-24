@@ -49,3 +49,32 @@ upload(req, res, (err:any) =>{
   return;
 });
 }
+
+
+export const validateVideo = (req: Request, res: Response, next: NextFunction) =>{
+  const allowedVideoTypes = [
+    'video/mp4',
+    'video/webm',
+    'video/ogg',
+    'video/avi',
+    'video/mov'
+  ];
+  const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fieldNameSize: 128,
+    fileSize: 100 * 1024 * 1024,
+  },
+  fileFilter: (req: Request, file: any, cb: any) =>{
+    if (!allowedVideoTypes.find(file.mimetype)) {
+      return cb(new Error('Invaid video format!'));
+    }
+    cb(null, true);
+  }
+}).single("video");
+
+upload(req, res, (err:any) =>{
+  next(err);
+  return;
+});
+}
