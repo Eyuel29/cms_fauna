@@ -18,7 +18,8 @@ const verifyAuth = async (req: Request, res: Response, next: NextFunction) =>{
             ${sessionProjection}`
         );
 
-        console.log(session);
+        req.user_id = session?.user?.id;
+        req.user_role = session?.user?.user_role;
 
         res.end();
     } catch (error) {
