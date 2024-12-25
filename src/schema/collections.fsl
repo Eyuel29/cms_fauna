@@ -2,6 +2,7 @@ collection User {
   username: String
   email: String
   passwordHash: String
+  user_role: number
 
   unique [.username, .email]
 
