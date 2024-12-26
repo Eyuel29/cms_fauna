@@ -8,9 +8,9 @@ import verifyAuth from '../middlewares/verify_auth';
 const router = Router();
 
 router.use('/blog', verifyAuth, blogRouter);
-router.use('/certificate',certificateRouter);
-router.use('/exprience',experienceRouter);
-router.use('/project',projectRouter);
-router.use('/review',reviewRouter);
+router.use('/certificate', verifyAuth,certificateRouter);
+router.use('/exprience',verifyAuth, experienceRouter);
+router.use('/project', verifyAuth, projectRouter);
+router.use('/review', verifyAuth, reviewRouter);
 
 export default router;
