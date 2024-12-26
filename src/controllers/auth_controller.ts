@@ -17,6 +17,7 @@ type AuthController = {
 
 const sessionProjection = fql `
     session {
+        id,
         session_id,
         expiresAt,
         user
@@ -26,6 +27,7 @@ const sessionProjection = fql `
 
 const userProjection = fql `
     user {
+        id,
         username,
         email
     }

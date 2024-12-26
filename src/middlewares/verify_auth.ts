@@ -8,6 +8,7 @@ const verifyAuth = async (req: Request, res: Response, next: NextFunction) =>{
         const session_id = req?.cookies?.session;    
         const sessionProjection = fql `
             session {
+                id,
                 session_id,
                 user
             }
