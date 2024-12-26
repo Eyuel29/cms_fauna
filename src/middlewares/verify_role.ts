@@ -11,6 +11,7 @@ const verifyRoles = (...allowedRoles: Number[]) => {
         const result = uRole.map(user_role => rolesArray.includes(user_role)).find(val => val === true);
         if (!result) return sendErrorResponse(res, 403, "Forbidden!");
         next();
+        
     }
 }
 

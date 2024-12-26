@@ -6,7 +6,7 @@ export const validateCerfiticate = (req: Request, res: Response, next: NextFunct
     storage: multer.memoryStorage(),
     limits: {
       fieldNameSize: 64,
-      fileSize: 1 * 1024 * 1024,
+      fileSize: 2 * 1024 * 1024,
     },
     fileFilter: (req: Request, file: any, cb: any) =>{
       if (file.mimetype !== 'application/pdf') {
