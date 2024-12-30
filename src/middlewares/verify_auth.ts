@@ -3,7 +3,7 @@ import { DocumentT, fql } from 'fauna';
 import faunaClient from '../config/fauna_client';
 import { FaunaSession, User } from '../types/models';
 
-const verifyAuth = async (req: Request, res: Response, next: NextFunction) =>{
+const verifyAuth = async (req: CMSRequest, res: Response, next: NextFunction) =>{
     try {
         const session_id = req?.cookies?.session;    
         const sessionProjection = fql `

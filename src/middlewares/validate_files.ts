@@ -1,14 +1,14 @@
 import { NextFunction, Request, Response } from "express";
 import multer from "multer";
 
-export const validateCerfiticate = (req: Request, res: Response, next: NextFunction) =>{
+export const validateCerfiticate = (req: CMSRequest, res: Response, next: NextFunction) =>{
     const upload = multer({
     storage: multer.memoryStorage(),
     limits: {
       fieldNameSize: 64,
       fileSize: 2 * 1024 * 1024,
     },
-    fileFilter: (req: Request, file: any, cb: any) =>{
+    fileFilter: (req: CMSRequest, file: any, cb: any) =>{
       if (file.mimetype !== 'application/pdf') {
         return cb(new Error('Only PDF files are allowed.'));
       }
@@ -22,7 +22,7 @@ export const validateCerfiticate = (req: Request, res: Response, next: NextFunct
   });
 }
 
-export const validateProfilePicture = (req: Request, res: Response, next: NextFunction) =>{
+export const validateProfilePicture = (req: CMSRequest, res: Response, next: NextFunction) =>{
   const allowedimageTypes = [
     'image/jpeg',
     'image/png',
@@ -36,7 +36,7 @@ export const validateProfilePicture = (req: Request, res: Response, next: NextFu
     fieldNameSize: 128,
     fileSize: 1 * 1024 * 1024,
   },
-  fileFilter: (req: Request, file: any, cb: any) =>{
+  fileFilter: (req: CMSRequest, file: any, cb: any) =>{
     if (!allowedimageTypes.find(file.mimetype)) {
       return cb(new Error('Invaid image format!'));
     }
@@ -51,7 +51,7 @@ upload(req, res, (err:any) =>{
 }
 
 
-export const validateVideo = (req: Request, res: Response, next: NextFunction) =>{
+export const validateVideo = (req: CMSRequest, res: Response, next: NextFunction) =>{
   const allowedVideoTypes = [
     'video/mp4',
     'video/webm',
@@ -65,7 +65,7 @@ export const validateVideo = (req: Request, res: Response, next: NextFunction) =
     fieldNameSize: 128,
     fileSize: 100 * 1024 * 1024,
   },
-  fileFilter: (req: Request, file: any, cb: any) =>{
+  fileFilter: (req: CMSRequest, file: any, cb: any) =>{
     if (!allowedVideoTypes.find(file.mimetype)) {
       return cb(new Error('Invaid video format!'));
     }

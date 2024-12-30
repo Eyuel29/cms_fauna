@@ -5,10 +5,10 @@ import { Experience } from "../types/models";
 import faunaClient from "../config/fauna_client";
 
 type ExprienceController = {
-    createExprience: (req: Request, res: Response, next: NextFunction) => Promise<void>;
-    deleteExprience: (req: Request, res: Response, next: NextFunction) => Promise<void>;
-    updateExprience: (req: Request, res: Response, next: NextFunction) => Promise<void>;
-    getAllExpriences: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    createExprience: (req: CMSRequest, res: Response, next: NextFunction) => Promise<void>;
+    deleteExprience: (req: CMSRequest, res: Response, next: NextFunction) => Promise<void>;
+    updateExprience: (req: CMSRequest, res: Response, next: NextFunction) => Promise<void>;
+    getAllExpriences: (req: CMSRequest, res: Response, next: NextFunction) => Promise<void>;
 };
 
 const experienceProjection = fql `
@@ -25,7 +25,7 @@ const experienceProjection = fql `
 `;
 
 const exprienceController: ExprienceController = {
-    createExprience: async (req: Request, res: Response, next: NextFunction) => {
+    createExprience: async (req: CMSRequest, res: Response, next: NextFunction) => {
         const { error } = experienceSchema.validate(req.body);
         if (error) {
             res.status(400).json({
@@ -59,7 +59,7 @@ const exprienceController: ExprienceController = {
             next(error);
         }
     },
-    getAllExpriences: async (req: Request, res: Response, next: NextFunction) => {
+    getAllExpriences: async (req: CMSRequest, res: Response, next: NextFunction) => {
       try {
         const {data:experience} = await faunaClient
         .query<DocumentT<Experience>>(fql `
@@ -75,7 +75,7 @@ const exprienceController: ExprienceController = {
         next(error);
       }
     },
-    updateExprience: async (req: Request, res: Response, next: NextFunction) => {
+    updateExprience: async (req: CMSRequest, res: Response, next: NextFunction) => {
         const {id} = req.params;
         if (!id) {
             res.status(400).json({
@@ -120,7 +120,7 @@ const exprienceController: ExprienceController = {
             next(error);     
         }
     },
-    deleteExprience: async (req: Request, res: Response, next: NextFunction) => {
+    deleteExprience: async (req: CMSRequest, res: Response, next: NextFunction) => {
         const {id} = req.params;
         if (!id) {
             res.status(400).json({

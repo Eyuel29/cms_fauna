@@ -5,10 +5,10 @@ import { Project } from "../types/models";
 import faunaClient from "../config/fauna_client";
 
 type ProjectController = {
-    createProject: (req: Request, res: Response, next: NextFunction) => Promise<void>;
-    deleteProject: (req: Request, res: Response, next: NextFunction) => Promise<void>;
-    updateProject: (req: Request, res: Response, next: NextFunction) => Promise<void>;
-    getAllProject: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    createProject: (req: CMSRequest, res: Response, next: NextFunction) => Promise<void>;
+    deleteProject: (req: CMSRequest, res: Response, next: NextFunction) => Promise<void>;
+    updateProject: (req: CMSRequest, res: Response, next: NextFunction) => Promise<void>;
+    getAllProject: (req: CMSRequest, res: Response, next: NextFunction) => Promise<void>;
 };
 
 
@@ -28,7 +28,7 @@ const projectProjection = fql `
 
 
 const projectController: ProjectController = {
-    createProject: async (req: Request, res: Response, next: NextFunction) => {
+    createProject: async (req: CMSRequest, res: Response, next: NextFunction) => {
         const { error } = projectSchema.validate(req.body);
 
         if (error) {
@@ -64,7 +64,7 @@ const projectController: ProjectController = {
             next(error);
         }
     },
-    getAllProject: async (req: Request, res: Response, next: NextFunction) => {
+    getAllProject: async (req: CMSRequest, res: Response, next: NextFunction) => {
       try {
         const {data: projects} = await faunaClient
         .query<DocumentT<Project>>(fql `Project.all()
@@ -81,7 +81,7 @@ const projectController: ProjectController = {
         next(error);     
       }
     },
-    updateProject: async (req: Request, res: Response, next: NextFunction) => {
+    updateProject: async (req: CMSRequest, res: Response, next: NextFunction) => {
         const {id} = req.params;
         if (!id) {
             res.status(400).json({
@@ -126,7 +126,7 @@ const projectController: ProjectController = {
             next(error);
         }
     },
-    deleteProject: async (req: Request, res: Response, next: NextFunction) => {
+    deleteProject: async (req: CMSRequest, res: Response, next: NextFunction) => {
         const {id} = req.params;
         if (!id) {
             res.status(400).json({
