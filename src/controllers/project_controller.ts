@@ -1,7 +1,7 @@
 import { Response, Request, NextFunction } from "express";
 import { DateStub, DocumentT, fql } from "fauna";
 import { projectSchema } from "../utils/validation_schema";
-import { Project } from "../models/models";
+import { Project } from "../types/models";
 import faunaClient from "../config/fauna_client";
 
 type ProjectController = {

@@ -1,7 +1,7 @@
 import { Response, Request, NextFunction } from "express";
 import { DateStub, DocumentT, fql } from "fauna";
 import { experienceSchema } from "../utils/validation_schema";
-import { Experience } from "../models/models";
+import { Experience } from "../types/models";
 import faunaClient from "../config/fauna_client";
 
 type ExprienceController = {

@@ -1,9 +1,10 @@
 import {Request, Response, NextFunction } from "express";
+import CMSRequest from "../types/types";
 
 const sendErrorResponse = require('../utils/sendErrorResponse');
 
 const verifyRoles = (...allowedRoles: Number[]) => {
-    return (req: Request, res: Response, next: NextFunction) => {
+    return (req: CMSRequest, res: Response, next: NextFunction) => {
         if (!req?.user_role) return sendErrorResponse(res, 401, "Unauthorized!");
 
         const rolesArray: Number[] = [...allowedRoles];

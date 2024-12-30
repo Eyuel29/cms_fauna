@@ -1,7 +1,7 @@
 import { Response, Request, NextFunction } from "express";
 import { DateStub, DocumentT, fql, ServiceError } from "fauna";
 import { reviewSchema } from "../utils/validation_schema";
-import { Review } from "../models/models";
+import { Review } from "../types/models";
 import faunaClient from "../config/fauna_client";
 
 type ReviewController = {
