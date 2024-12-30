@@ -1,4 +1,4 @@
-import {Request, Response, NextFunction } from "express";
+import { Response, NextFunction } from "express";
 import CMSRequest from "../types/types";
 
 const sendErrorResponse = require('../utils/sendErrorResponse');

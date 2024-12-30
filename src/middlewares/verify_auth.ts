@@ -1,7 +1,8 @@
-import {Request, Response, NextFunction} from 'express';
+import { Response, NextFunction} from 'express';
 import { DocumentT, fql } from 'fauna';
 import faunaClient from '../config/fauna_client';
 import { FaunaSession, User } from '../types/models';
+import CMSRequest from '../types/types';
 
 const verifyAuth = async (req: CMSRequest, res: Response, next: NextFunction) =>{
     try {

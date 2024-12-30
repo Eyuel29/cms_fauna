@@ -1,5 +1,6 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Response } from "express";
 import multer from "multer";
+import CMSRequest from "../types/types";
 
 export const validateCerfiticate = (req: CMSRequest, res: Response, next: NextFunction) =>{
     const upload = multer({

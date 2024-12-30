@@ -1,8 +1,9 @@
-import { Response, Request, NextFunction } from "express";
+import { Response, NextFunction } from "express";
 import { FaunaSession, User } from "../types/models";
 import { DocumentT, fql } from "fauna";
 import faunaClient from "../config/fauna_client";
 import { userSchema } from "../utils/validation_schema";
+import CMSRequest from "../types/types";
 
 type AuthController = {
     signUp: (req: CMSRequest, res: Response, next: NextFunction) => Promise<void>;

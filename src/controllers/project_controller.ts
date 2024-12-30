@@ -1,8 +1,9 @@
-import { Response, Request, NextFunction } from "express";
+import { Response, NextFunction } from "express";
 import { DateStub, DocumentT, fql } from "fauna";
 import { projectSchema } from "../utils/validation_schema";
 import { Project } from "../types/models";
 import faunaClient from "../config/fauna_client";
+import CMSRequest from "../types/types";
 
 type ProjectController = {
     createProject: (req: CMSRequest, res: Response, next: NextFunction) => Promise<void>;

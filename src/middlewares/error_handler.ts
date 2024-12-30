@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction} from "express";
+import { Response, NextFunction} from "express";
 import { MulterError } from "multer";
 import {
     FaunaError,
@@ -19,6 +19,7 @@ import {
     NetworkError,
     ProtocolError
 } from "fauna";
+import CMSRequest from "../types/types";
 
 const errorHandler = (err: any, req: CMSRequest, res: Response, next : NextFunction) => {
     const statusCode = err.statusCode || 500;
