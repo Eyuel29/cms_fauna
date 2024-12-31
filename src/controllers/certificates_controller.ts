@@ -7,9 +7,9 @@ import CMSRequest from "../types/types";
 import {validateCerfiticate} from "../middlewares/validate_files";
 
 type CertificateController = {
-    createCertificate: (req: CMSRequest, res: Response, next: NextFunction) => Promise<void>;
-    deleteCertificate: (req: CMSRequest, res: Response, next: NextFunction) => Promise<void>;
-    getAllCertificates: (req: CMSRequest, res: Response, next: NextFunction) => Promise<void>;
+    createCertificate: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    deleteCertificate: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    getAllCertificates: (req: Request, res: Response, next: NextFunction) => Promise<void>;
 };
 
 
@@ -28,7 +28,7 @@ const certificateProjection = fql `
 
 
 const certificateController: CertificateController = {
-    createCertificate: async (req: CMSRequest, res: Response, next: NextFunction) => {
+    createCertificate: async (req: Request, res: Response, next: NextFunction) => {
         console.log(req.file);
         
         const { error } = certificateSchema.validate(req.body);
@@ -65,7 +65,7 @@ const certificateController: CertificateController = {
             next(error);     
         }
     },
-    getAllCertificates: async (req: CMSRequest, res: Response, next: NextFunction) => {
+    getAllCertificates: async (req: Request, res: Response, next: NextFunction) => {
       try {
         const {data: certificates} = await faunaClient
         .query<DocumentT<Certificate>>(fql `
@@ -85,7 +85,7 @@ const certificateController: CertificateController = {
         next(error);
       }
     },
-    deleteCertificate: async (req: CMSRequest, res: Response, next: NextFunction) => {
+    deleteCertificate: async (req: Request, res: Response, next: NextFunction) => {
         const {id} = req.params;
 
         if (!id) {

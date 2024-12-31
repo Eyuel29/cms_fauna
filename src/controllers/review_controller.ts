@@ -6,15 +6,15 @@ import faunaClient from "../config/fauna_client";
 import CMSRequest from "../types/types";
 
 type ReviewController = {
-    createReview: (req: CMSRequest, res: Response, next: NextFunction) => Promise<void>;
-    deleteReview: (req: CMSRequest, res: Response, next: NextFunction) => Promise<void>;
-    updateReview: (req: CMSRequest, res: Response, next: NextFunction) => Promise<void>;
-    getAllReview: (req: CMSRequest, res: Response, next: NextFunction) => Promise<void>;
+    createReview: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    deleteReview: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    updateReview: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    getAllReview: (req: Request, res: Response, next: NextFunction) => Promise<void>;
 };
 
 
 const reviewProjection = fql `
-    review {
+    review {    
         id,
         reviewerName,
         reviewerEmail,
@@ -27,7 +27,7 @@ const reviewProjection = fql `
 
 
 const ReviewController: ReviewController = {
-    createReview: async (req: CMSRequest, res: Response, next: NextFunction) => {
+    createReview: async (req: Request, res: Response, next: NextFunction) => {
         const { error } = reviewSchema.validate(req.body);
         if (error) {
             res.status(400).json({
@@ -62,7 +62,7 @@ const ReviewController: ReviewController = {
         }
         
     },
-    getAllReview: async (req: CMSRequest, res: Response, next: NextFunction) => {
+    getAllReview: async (req: Request, res: Response, next: NextFunction) => {
       try {
         const {data: reviews} = await faunaClient
         .query<DocumentT<Review>>(fql `
@@ -80,7 +80,7 @@ const ReviewController: ReviewController = {
         next(error);
       }
     },
-    updateReview: async (req: CMSRequest, res: Response, next: NextFunction) => {
+    updateReview: async (req: Request, res: Response, next: NextFunction) => {
         const {id} = req.params;
         if (!id) {
             res.status(400).json({
@@ -123,7 +123,7 @@ const ReviewController: ReviewController = {
             next(error);     
         }
     },
-    deleteReview: async (req: CMSRequest, res: Response, next: NextFunction) => {
+    deleteReview: async (req: Request, res: Response, next: NextFunction) => {
         const {id} = req.params;
         if (!id) {
             res.status(400).json({

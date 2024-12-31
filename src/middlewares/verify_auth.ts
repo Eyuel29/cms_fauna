@@ -1,10 +1,9 @@
-import { Response, NextFunction} from 'express';
+import { Response, NextFunction, Request} from 'express';
 import { DocumentT, fql } from 'fauna';
 import faunaClient from '../config/fauna_client';
 import { FaunaSession, User } from '../types/models';
-import CMSRequest from '../types/types';
 
-const verifyAuth = async (req: CMSRequest, res: Response, next: NextFunction) =>{
+const verifyAuth = async (req: Request, res: Response, next: NextFunction) =>{
     try {
         const session_id = req?.cookies?.session;    
         const sessionProjection = fql `
@@ -20,8 +19,19 @@ const verifyAuth = async (req: CMSRequest, res: Response, next: NextFunction) =>
             ${sessionProjection}`
         );
 
-        req.user_id = session?.user?.id;
-        req.user_role = session?.user?.user_role;
+
+
+        if (!session || !session.user.id || !session.user.user_role) {
+            res.status(500).json({
+                success: false,
+                message: "Something went wrong!"
+            })
+
+            return;
+        }
+
+        req.user_id = session?.user?.id?.toString();
+        req.user_role = Number(session?.user?.user_role);
 
         res.end();
     } catch (error) {

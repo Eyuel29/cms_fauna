@@ -21,7 +21,7 @@ import {
 } from "fauna";
 import CMSRequest from "../types/types";
 
-const errorHandler = (err: any, req: CMSRequest, res: Response, next : NextFunction) => {
+const errorHandler = (err: any, req: Request, res: Response, next : NextFunction) => {
     const statusCode = err.statusCode || 500;
 
     if (process.env.NODE_ENV !== "production") console.error(err);

@@ -6,11 +6,11 @@ import faunaClient from "../config/fauna_client";
 import CMSRequest from "../types/types";
 
 type BlogController = {
-    createBlog: (req: CMSRequest, res: Response, next: NextFunction) => Promise<void>;
-    getSingleBlog: (req: CMSRequest, res: Response, next: NextFunction) => Promise<void>;
-    getAllBlogs: (req: CMSRequest, res: Response, next: NextFunction) => Promise<void>;
-    updateBlog: (req: CMSRequest, res: Response, next: NextFunction) => Promise<void>;
-    deleteBlog: (req: CMSRequest, res: Response, next: NextFunction) => Promise<void>;
+    createBlog: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    getSingleBlog: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    getAllBlogs: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    updateBlog: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    deleteBlog: (req: Request, res: Response, next: NextFunction) => Promise<void>;
 };
 
 const blogProjection = fql `
@@ -26,7 +26,7 @@ const blogProjection = fql `
 `;
 
 const blogController: BlogController = {
-    createBlog: async (req: CMSRequest, res: Response, next: NextFunction) => {
+    createBlog: async (req: Request, res: Response, next: NextFunction) => {
         const { error } = blogSchema.validate(req.body);
         if (error) {
             res.status(400).json({
@@ -56,7 +56,7 @@ const blogController: BlogController = {
             next(error);
         }
     },
-    getSingleBlog: async (req: CMSRequest, res: Response, next: NextFunction) => {
+    getSingleBlog: async (req: Request, res: Response, next: NextFunction) => {
       const {id} = req.params;
 
       if (!id || isNaN(Number(id))) {
@@ -83,7 +83,7 @@ const blogController: BlogController = {
         next(error);
       }
     },
-    getAllBlogs: async (req: CMSRequest, res: Response, next: NextFunction) => {
+    getAllBlogs: async (req: Request, res: Response, next: NextFunction) => {
         try {
             const {data: blogs} = await faunaClient.query<DocumentT<Blog>>(
                 fql `let blogs = Blog.all()
@@ -99,7 +99,7 @@ const blogController: BlogController = {
             next(error);     
         }
     },
-    deleteBlog: async (req: CMSRequest, res: Response, next: NextFunction) => {
+    deleteBlog: async (req: Request, res: Response, next: NextFunction) => {
         const {id} = req.params;
         if (!id) {
             res.status(400).json({
@@ -124,7 +124,7 @@ const blogController: BlogController = {
             next(error);     
         }  
     },
-    updateBlog: async (req: CMSRequest, res: Response, next: NextFunction) => {
+    updateBlog: async (req: Request, res: Response, next: NextFunction) => {
         const {id} = req.params;
         if (!id) {
             res.status(400).json({
