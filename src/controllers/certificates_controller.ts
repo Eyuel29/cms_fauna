@@ -3,7 +3,6 @@ import { DateStub, DocumentT, fql } from "fauna";
 import { certificateSchema } from "../utils/validation_schema";
 import { Certificate } from "../types/models";
 import faunaClient from "../config/fauna_client";
-import CMSRequest from "../types/types";
 import {validateCerfiticate} from "../middlewares/validate_files";
 
 type CertificateController = {

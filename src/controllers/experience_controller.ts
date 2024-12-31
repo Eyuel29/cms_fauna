@@ -3,7 +3,6 @@ import { DateStub, DocumentT, fql } from "fauna";
 import { experienceSchema } from "../utils/validation_schema";
 import { Experience } from "../types/models";
 import faunaClient from "../config/fauna_client";
-import CMSRequest from "../types/types";
 
 type ExprienceController = {
     createExprience: (req: Request, res: Response, next: NextFunction) => Promise<void>;

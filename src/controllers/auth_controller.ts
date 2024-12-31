@@ -3,7 +3,6 @@ import { FaunaSession, User } from "../types/models";
 import { DocumentT, fql } from "fauna";
 import faunaClient from "../config/fauna_client";
 import { userSchema } from "../utils/validation_schema";
-import CMSRequest from "../types/types";
 
 type AuthController = {
     signUp: (req: Request, res: Response, next: NextFunction) => Promise<void>;

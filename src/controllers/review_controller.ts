@@ -3,7 +3,6 @@ import { DateStub, DocumentT, fql, ServiceError } from "fauna";
 import { reviewSchema } from "../utils/validation_schema";
 import { Review } from "../types/models";
 import faunaClient from "../config/fauna_client";
-import CMSRequest from "../types/types";
 
 type ReviewController = {
     createReview: (req: Request, res: Response, next: NextFunction) => Promise<void>;

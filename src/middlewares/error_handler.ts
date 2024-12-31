@@ -19,7 +19,6 @@ import {
     NetworkError,
     ProtocolError
 } from "fauna";
-import CMSRequest from "../types/types";
 
 const errorHandler = (err: any, req: Request, res: Response, next : NextFunction) => {
     const statusCode = err.statusCode || 500;

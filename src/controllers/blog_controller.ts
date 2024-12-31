@@ -3,7 +3,6 @@ import { DateStub, DocumentT, fql } from "fauna";
 import { blogSchema } from "../utils/validation_schema";
 import { Blog } from "../types/models";
 import faunaClient from "../config/fauna_client";
-import CMSRequest from "../types/types";
 
 type BlogController = {
     createBlog: (req: Request, res: Response, next: NextFunction) => Promise<void>;
