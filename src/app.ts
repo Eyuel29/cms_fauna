@@ -15,6 +15,7 @@ app.use(express.urlencoded({extended: true}));
 app.use('/api', verifyAuth, router);
 
 app.use(errorHandler);
+
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 });
