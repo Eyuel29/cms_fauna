@@ -1,7 +1,7 @@
-import { Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 import { DateStub, DocumentT, fql } from "fauna";
 import { experienceSchema } from "../utils/validation_schema";
-import { Experience } from "../types/models";
+import { Experience } from "../types/model/models";
 import faunaClient from "../config/fauna_client";
 
 type ExprienceController = {
@@ -121,6 +121,7 @@ const exprienceController: ExprienceController = {
         }
     },
     deleteExprience: async (req: Request, res: Response, next: NextFunction) => {
+        
         const {id} = req.params;
         if (!id) {
             res.status(400).json({

@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import morgan from 'morgan';
 import dotenv from 'dotenv';
 import errorHandler from "./middlewares/error_handler";
@@ -13,6 +13,11 @@ app.use(morgan("tiny"));
 app.use(express.urlencoded({extended: true}));
 
 app.use('/api', verifyAuth, router);
+
+
+app.get('/', (req: Request, res: Response) => {
+    
+});
 
 app.use(errorHandler);
 

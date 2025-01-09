@@ -1,7 +1,7 @@
-import { Response, NextFunction } from "express";
+import {Request, Response, NextFunction } from "express";
 import { DateStub, DocumentT, fql } from "fauna";
 import { certificateSchema } from "../utils/validation_schema";
-import { Certificate } from "../types/models";
+import { Certificate } from "../types/model/models";
 import faunaClient from "../config/fauna_client";
 import {validateCerfiticate} from "../middlewares/validate_files";
 

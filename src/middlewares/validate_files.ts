@@ -1,4 +1,4 @@
-import { NextFunction, Response } from "express";
+import { Request, NextFunction, Response } from "express";
 import multer from "multer";
 
 export const validateCerfiticate = (req: Request, res: Response, next: NextFunction) =>{

@@ -8,5 +8,4 @@ experienceRouter.get('/index', experienceController.getAllExpriences);
 experienceRouter.put('/update/:id', experienceController.updateExprience);
 experienceRouter.delete('/delete/:id', experienceController.deleteExprience);
 
-
 export default experienceRouter;

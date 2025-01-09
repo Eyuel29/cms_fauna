@@ -1,5 +1,5 @@
-import { Response, NextFunction, Request } from "express";
-import { FaunaSession, User } from "../types/models";
+import {Request, Response, NextFunction } from "express";
+import { FaunaSession, User } from "../types/model/models";
 import { DocumentT, fql } from "fauna";
 import faunaClient from "../config/fauna_client";
 import { userSchema } from "../utils/validation_schema";

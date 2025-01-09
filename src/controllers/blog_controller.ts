@@ -1,7 +1,7 @@
-import { Response, NextFunction } from "express";
+import {Request, Response, NextFunction } from "express";
 import { DateStub, DocumentT, fql } from "fauna";
 import { blogSchema } from "../utils/validation_schema";
-import { Blog } from "../types/models";
+import { Blog } from "../types/model/models";
 import faunaClient from "../config/fauna_client";
 
 type BlogController = {
