@@ -28,8 +28,8 @@ const verifyAuth = async (req: Request, res: Response, next: NextFunction) =>{
             return;
         }
 
-        // req.user_id = session?.user?.id?.toString();
-        // req.user_role = Number(session?.user?.user_role);
+        req.user_id = session?.user?.id?.toString();
+        req.user_role = Number(session?.user?.user_role);
 
         res.end();
     } catch (error) {
