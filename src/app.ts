@@ -14,11 +14,6 @@ app.use(express.urlencoded({extended: true}));
 
 app.use('/api', verifyAuth, router);
 
-
-app.get('/', (req: Request, res: Response) => {
-    
-});
-
 app.use(errorHandler);
 
 app.listen(port, () => {
